@@ -314,7 +314,7 @@ lychee.define('lychee.ui.Notice').requires([
 			id = typeof id === 'string' ? id : null;
 
 
-			if (id !== null && this.__states[id] !== undefined) {
+			if (id !== null && id !== this.state && this.__states[id] !== undefined) {
 
 				if (id === 'active') {
 
