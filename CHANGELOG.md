@@ -16,8 +16,10 @@ some things might break temporarily on the `development` and
 
 The update behaviour is changed as explained in the [RELEASE Guide](./guides/RELEASE.md).
 
+## [2016-Q4] - (UNRELEASED)
 
-## [2016-Q3] - 2016-09-28 (UNRELEASED)
+
+## [2016-Q3] - 2016-09-28
 
 - Changed: Integration of [@humansneednotapply](https://github.com/humansneednotapply) Account.
 - Changed: Integration of `.github/TOKEN` file.
