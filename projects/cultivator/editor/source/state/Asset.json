@@ -28,7 +28,7 @@
 										}
 									]
 								}, {
-									"constructor": "app.ui.element.Project",
+									"constructor": "app.ui.element.Font",
 									"arguments": [
 										{
 											"label": "Modify",
@@ -38,11 +38,11 @@
 										}
 									]
 								}, {
-									"constructor": "app.ui.element.Breeder",
+									"constructor": "app.ui.element.Preview",
 									"arguments": [
 										{
-											"label": "Breed",
-											"width": 320,
+											"label": "Preview",
+											"width": 512,
 											"height": 620,
 											"visible": false
 										}
@@ -50,15 +50,15 @@
 								}
 							],
 							"map": {
-								"select": 0,
-								"modify": 1,
-								"breed":  2
+								"select":  0,
+								"modify":  1,
+								"preview": 2
 							}
 						}
 					}
 				],
 				"map": {
-					"project": 0
+					"asset": 0
 				}
 			}
 		}
