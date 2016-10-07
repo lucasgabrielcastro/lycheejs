@@ -24,7 +24,6 @@ Support our libre Bot Cloud via BTC [1CamMuvrFU1QAMebPoDsL3JrioVDoxezY2](bitcoin
 </details>
 
 
-
 ## IMPORTANT NOTICE
 
 We went live with our AI on 1. Sept 2016. This caused a totally fucked up
@@ -77,7 +76,6 @@ maintenance and deployment of applications. The underlying
 technology stack does not matter (HTML5, WebGL, OpenGL,
 OpenGLES, libSDL) and is completely automated behind the
 scenes.
-
 
 
 ## Features
