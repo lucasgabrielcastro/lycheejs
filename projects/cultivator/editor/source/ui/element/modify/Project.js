@@ -1,5 +1,5 @@
 
-lychee.define('app.ui.element.Project').requires([
+lychee.define('app.ui.element.modify.Project').requires([
 	'app.data.Project',
 	'lychee.ui.entity.Input',
 	'lychee.ui.entity.List',
@@ -48,6 +48,7 @@ lychee.define('app.ui.element.Project').requires([
 		delete settings.project;
 
 
+		settings.label   = 'Modify';
 		settings.options = [];
 
 		_Element.call(this, settings);

@@ -4,7 +4,7 @@ lychee.define('app.state.Project').includes([
 ]).requires([
 	'app.data.Project',
 	'app.ui.element.Breeder',
-	'app.ui.element.Project',
+	'app.ui.element.modify.Project',
 	'lychee.ui.Blueprint',
 	'lychee.ui.Element',
 	'lychee.ui.Layer',

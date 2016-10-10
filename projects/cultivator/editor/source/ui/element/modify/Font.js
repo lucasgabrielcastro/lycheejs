@@ -1,5 +1,5 @@
 
-lychee.define('app.ui.element.Font').requires([
+lychee.define('app.ui.element.modify.Font').requires([
 	'app.codec.FONT',
 	'lychee.ui.entity.Input',
 	'lychee.ui.entity.Select',
@@ -17,6 +17,48 @@ lychee.define('app.ui.element.Font').requires([
 
 
 	/*
+	 * HELPERS
+	 */
+
+	const _on_change = function() {
+
+		let settings = this.font.__font;
+		let asset    = _FONT.encode({
+			font: {
+				family:  settings.family,
+				color:   settings.color,
+				size:    settings.size,
+				style:   settings.style,
+				outline: settings.outline
+			}
+		});
+
+
+		// TODO: Remove this debug shit into a Preview element
+		global.setTimeout(function() {
+
+			let img = asset.texture.buffer;
+
+			img.style.position = 'absolute';
+			img.style.zIndex = 20000;
+			img.style.top = '0px';
+			img.style.left = '0px';
+			img.style.backgroundColor = 'red';
+
+			let tmp = document.querySelector('body > img');
+			if (tmp !== null) {
+				document.body.removeChild(tmp);
+			}
+
+			document.body.appendChild(img);
+
+		}, 500);
+
+	};
+
+
+
+	/*
 	 * IMPLEMENTATION
 	 */
 
@@ -28,16 +70,11 @@ lychee.define('app.ui.element.Font').requires([
 		this.font = null;
 
 
+		settings.label   = 'Modify';
 		settings.options = [];
-
-		this.setFont(settings.font);
-
-		delete settings.font;
 
 
 		_Element.call(this, settings);
-
-		settings = null;
 
 
 
@@ -85,6 +122,8 @@ lychee.define('app.ui.element.Font').requires([
 				font.__font.family        = value;
 			}
 
+			_on_change.call(this);
+
 		}, this);
 
 		this.getEntity('color').bind('change', function(value) {
@@ -94,6 +133,8 @@ lychee.define('app.ui.element.Font').requires([
 				font.__buffer.font.color = value;
 				font.__font.color        = value;
 			}
+
+			_on_change.call(this);
 
 		}, this);
 
@@ -105,6 +146,8 @@ lychee.define('app.ui.element.Font').requires([
 				font.__font.size        = value;
 			}
 
+			_on_change.call(this);
+
 		}, this);
 
 		this.getEntity('style').bind('change', function(value) {
@@ -112,8 +155,10 @@ lychee.define('app.ui.element.Font').requires([
 			let font = this.font;
 			if (font !== null) {
 				font.__buffer.font.style = value;
-				font.__font.size         = value;
+				font.__font.style        = value;
 			}
+
+			_on_change.call(this);
 
 		}, this);
 
@@ -125,7 +170,14 @@ lychee.define('app.ui.element.Font').requires([
 				font.__font.outline        = value;
 			}
 
+			_on_change.call(this);
+
 		}, this);
+
+
+		this.setFont(settings.font);
+
+		settings = null;
 
 	};
 
@@ -162,13 +214,22 @@ lychee.define('app.ui.element.Font').requires([
 				this.font = font;
 
 
-				let tmp = font.__font;
+				let tmp1 = font.__font || null;
+				if (tmp1 !== null) {
 
-				this.getEntity('color').setValue(tmp.color);
-				this.getEntity('family').setValue(tmp.family);
-				this.getEntity('outline').setValue(tmp.outline);
-				this.getEntity('size').setValue(tmp.size);
-				this.getEntity('style').setValue(tmp.style);
+					this.getEntity('color').setValue(tmp1.color);
+					this.getEntity('family').setValue(tmp1.family);
+					this.getEntity('outline').setValue(tmp1.outline);
+					this.getEntity('size').setValue(tmp1.size);
+					this.getEntity('style').setValue(tmp1.style);
+
+				}
+
+				let tmp2 = font.__buffer.font || null;
+				if (tmp2 === null) {
+					font.__buffer      = font.__buffer || {};
+					font.__buffer.font = {};
+				}
 
 
 				this.setOptions([]);

@@ -28,7 +28,7 @@
 										}
 									]
 								}, {
-									"constructor": "app.ui.element.Project",
+									"constructor": "app.ui.element.modify.Project",
 									"arguments": [
 										{
 											"label": "Modify",
