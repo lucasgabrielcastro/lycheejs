@@ -25,6 +25,7 @@ lychee.define('lychee.ui.State').requires([
 	const _State     = lychee.import('lychee.app.State');
 	const _Visible   = lychee.import('lychee.effect.Visible');
 	const _BLOB      = attachments["json"].buffer;
+	let   _BG        = null;
 	const _INSTANCES = [];
 	let   _MENU      = null;
 	let   _NOTICE    = null;
@@ -230,8 +231,14 @@ lychee.define('lychee.ui.State').requires([
 
 
 				let main   = this.main;
+				let bg     = this.getLayer('bg');
 				let menu   = this.queryLayer('ui', 'menu');
 				let notice = this.queryLayer('ui', 'notice');
+
+
+				if (main !== null && bg !== null) {
+					_BG = bg;
+				}
 
 
 				if (main !== null && menu !== null) {
@@ -279,10 +286,9 @@ lychee.define('lychee.ui.State').requires([
 
 
 				if (main !== null && notice !== null) {
-
 					_NOTICE = notice;
-
 				}
+
 
 			} else {
 
@@ -290,8 +296,21 @@ lychee.define('lychee.ui.State').requires([
 
 
 				let main   = this.main;
+				let bg     = this.getLayer('bg');
 				let menu   = this.queryLayer('ui', 'menu');
 				let notice = this.queryLayer('ui', 'notice');
+
+
+				if (bg !== null && bg !== _BG) {
+
+					// Allow custom bg for each state
+
+				} else if (bg === null) {
+
+					this.setLayer('bg', _BG);
+					bg = _BG;
+
+				}
 
 
 				if (menu !== null && menu !== _MENU) {
@@ -390,7 +409,6 @@ lychee.define('lychee.ui.State').requires([
 				}
 
 			}
-
 
 
 			if (_MENU !== null) {
