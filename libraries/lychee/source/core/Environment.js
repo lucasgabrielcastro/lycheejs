@@ -418,22 +418,7 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 		let template = null;
 		if (definition._exports !== null) {
 
-			if (this.debug === true) {
-
-				try {
-
-					template = definition._exports.call(
-						definition._exports,
-						this.global.lychee,
-						this.global,
-						definition._attaches
-					) || null;
-
-				} catch(err) {
-					lychee.Debugger.report(this, err, definition);
-				}
-
-			} else {
+			try {
 
 				template = definition._exports.call(
 					definition._exports,
@@ -442,6 +427,8 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 					definition._attaches
 				) || null;
 
+			} catch(err) {
+				lychee.Debugger.report(this, err, definition);
 			}
 
 		}
@@ -1292,18 +1279,10 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 						}
 
 
-						if (this.debug === true) {
-
-							try {
-								callback.call(this.global, null);
-							} catch(err) {
-								lychee.Debugger.report(this, err, null);
-							}
-
-						} else {
-
+						try {
 							callback.call(this.global, null);
-
+						} catch(err) {
+							lychee.Debugger.report(this, err, null);
 						}
 
 					};
@@ -1315,18 +1294,10 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 						}
 
 
-						if (this.debug === true) {
-
-							try {
-								callback.call(this.global, this.global);
-							} catch(err) {
-								lychee.Debugger.report(this, err, null);
-							}
-
-						} else {
-
+						try {
 							callback.call(this.global, this.global);
-
+						} catch(err) {
+							lychee.Debugger.report(this, err, null);
 						}
 
 					};

@@ -984,6 +984,11 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 					that = that.environment.global.lychee;
 				}
 
+				// XXX: Third sandboxed hierarchy
+				if (that.environment.sandbox === true) {
+					that = that.environment.global.lychee;
+				}
+
 
 				let resolved_module = _resolve_reference.call(that.environment.global, reference);
 				if (resolved_module !== null) {
