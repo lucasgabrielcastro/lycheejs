@@ -118,6 +118,11 @@
 	 * POLYFILLS
 	 */
 
+	let consol = 'console' in global && typeof console !== 'undefined';
+	if (consol === false) {
+		console = {};
+	}
+
 	const  _log     = console.log   || function() {};
 	const  _info    = console.info  || console.log;
 	const  _warn    = console.warn  || console.log;
@@ -313,19 +318,9 @@
 		};
 
 
-		let consol = 'console' in global && typeof console !== 'undefined';
 		let audio  = 'Audio' in global && typeof Audio !== 'undefined';
 		let buffer = true;
 		let image  = 'Image' in global && typeof Image !== 'undefined';
-
-
-		if (consol) {
-
-		} else {
-
-			console = {};
-
-		}
 
 
 		if (audio) {
@@ -1139,9 +1134,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Config at "' + this.url + '" is invalid');
-					}
+					console.warn('bootstrap.js: Invalid Config at "' + this.url + '" (No JSON file).');
 
 				}
 
@@ -1189,9 +1182,7 @@
 
 		} else {
 
-			if (lychee.debug === true) {
-				console.error('bootstrap.js: Font at "' + this.url + '" is invalid (No FNT file)');
-			}
+			console.warn('bootstrap.js: Invalid Font at "' + this.url + '" (No FNT file).');
 
 		}
 
@@ -2194,9 +2185,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Texture at "' + url.substr(0, 15) + '" is invalid (no PNG file)');
-					}
+					console.warn('bootstrap.js: Invalid Texture at "' + url.substr(0, 15) + '" (No PNG file).');
 
 
 					if (this.onload instanceof Function) {
@@ -2224,7 +2213,7 @@
 
 						let is_power_of_two = (this.width & (this.width - 1)) === 0 && (this.height & (this.height - 1)) === 0;
 						if (lychee.debug === true && is_power_of_two === false) {
-							console.warn('bootstrap.js: Texture at ' + this.url + ' is NOT power-of-two');
+							console.warn('bootstrap.js: Texture at "' + this.url + '" is NOT power-of-two');
 						}
 
 
@@ -2248,9 +2237,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Texture at "' + this.url + '" is invalid (no PNG file)');
-					}
+					console.warn('bootstrap.js: Invalid Texture at "' + this.url + '" (no PNG file).');
 
 
 					if (this.onload instanceof Function) {

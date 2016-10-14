@@ -851,9 +851,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.warn('lychee.deserialize: Require ' + (data.reference || data.constructor) + ' to deserialize it.');
-					}
+					console.info('lychee.deserialize: Require ' + (data.reference || data.constructor) + ' to deserialize it.');
 
 				}
 
@@ -881,14 +879,10 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 					} else if (typeof definition.displayName !== 'undefined') {
 
-						if (lychee.debug === true) {
-
-							if (definition.prototype instanceof Object) {
-								console.warn('lychee.deserialize: Define ' + (definition.displayName) + '.prototype.serialize() to serialize it.');
-							} else {
-								console.warn('lychee.deserialize: Define ' + (definition.displayName) + '.serialize() to serialize it.');
-							}
-
+						if (definition.prototype instanceof Object) {
+							console.info('lychee.deserialize: Define ' + (definition.displayName) + '.prototype.serialize() to serialize it.');
+						} else {
+							console.info('lychee.deserialize: Define ' + (definition.displayName) + '.serialize() to serialize it.');
 						}
 
 					} else {
@@ -998,11 +992,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 
 				if (instance === null) {
-
-					if (lychee.debug === true) {
-						console.warn('lychee.deserialize: Require ' + (reference) + ' to import it.');
-					}
-
+					console.info('lychee.deserialize: Require ' + (reference) + ' to import it.');
 				}
 
 
@@ -1016,6 +1006,8 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 		},
 
 		envinit: function(environment, profile) {
+
+			let message = environment !== null;
 
 			environment = environment instanceof lychee.Environment ? environment : null;
 			profile     = profile instanceof Object                 ? profile     : {};
@@ -1069,6 +1061,11 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				lychee.setEnvironment(environment);
 				environment.init(new Function('sandbox', code));
+
+			} else if (message === true) {
+
+				console.warn('lychee.envinit: Invalid environment');
+				console.info('lychee.envinit: Use lychee.envinit(env, profile) where env is a lychee.Environment instance');
 
 			}
 
@@ -1139,9 +1136,24 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 								lychee.setEnvironment(environment);
 								environment.init(new Function('sandbox', code));
 
+							} else {
+
+								console.warn('lychee.pkginit: Invalid settings for "' + identifier + '" in lychee.pkg.');
+								console.info('lychee.pkginit: Insert settings at "/build/environments/\"' + identifier + '\"" in lychee.pkg.');
+
 							}
 
+						} else {
+
+							console.warn('lychee.pkginit: Invalid package at "' + this.url + '".');
+							console.info('lychee.pkginit: Replace lychee.pkg with the one from "/projects/boilerplate".');
+
 						}
+
+					} else {
+
+						console.warn('lychee.pkginit: Invalid package at "' + this.url + '".');
+						console.info('lychee.pkginit: Replace lychee.pkg with the one from "/projects/boilerplate".');
 
 					}
 
@@ -1184,9 +1196,8 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.warn('lychee.inject: Set Environment to inject another into it.');
-					}
+					console.warn('lychee.inject: Invalid default environment for injection.');
+					console.info('lychee.inject: Use lychee.setEnvironment(env) before using lychee.inject(other).');
 
 				}
 

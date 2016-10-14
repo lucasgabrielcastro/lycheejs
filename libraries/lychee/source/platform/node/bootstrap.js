@@ -535,9 +535,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Config at ' + this.url + ' is invalid (No JSON file)');
-					}
+					console.warn('bootstrap.js: Invalid Config at "' + this.url + '" (No JSON file).');
 
 				}
 
@@ -585,9 +583,7 @@
 
 		} else {
 
-			if (lychee.debug === true) {
-				console.error('bootstrap.js: Font at "' + this.url + '" is invalid (No FNT file)');
-			}
+			console.warn('bootstrap.js: Invalid Font at "' + this.url + '" (No FNT file).');
 
 		}
 
@@ -1321,9 +1317,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Texture at "' + url.substr(0, 15) + '" is invalid (no PNG file)');
-					}
+					console.warn('bootstrap.js: Invalid Texture at "' + url.substr(0, 15) + '" (No PNG file).');
 
 				}
 
@@ -1354,7 +1348,7 @@
 
   						let is_power_of_two = (this.width & (this.width - 1)) === 0 && (this.height & (this.height - 1)) === 0;
 						if (lychee.debug === true && is_power_of_two === false) {
-							console.warn('bootstrap.js: Texture at ' + this.url + ' is NOT power-of-two');
+							console.warn('bootstrap.js: Texture at "' + this.url + '" is NOT power-of-two');
 						}
 
 
@@ -1367,9 +1361,7 @@
 
 				} else {
 
-					if (lychee.debug === true) {
-						console.error('bootstrap.js: Texture at "' + this.url + '" is invalid (no PNG file)');
-					}
+					console.warn('bootstrap.js: Invalid Texture at "' + this.url + '" (No PNG file).');
 
 
 					if (this.onload instanceof Function) {
