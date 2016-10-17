@@ -91,9 +91,7 @@ lychee.define('lychee.crypto.CRC32').exports(function(lychee, global, attachment
 
 		digest: function() {
 
-			let crc  = this.__crc;
 			let hash = (this.__crc).toString(16);
-
 			if (hash.length % 2 === 1) {
 				hash = '0' + hash;
 			}
