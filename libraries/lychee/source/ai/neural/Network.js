@@ -1,8 +1,8 @@
 
 lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attachments) {
 
-	var _BIAS                = -1;
-	var _ACTIVATION_RESPONSE =  1;
+	const _BIAS                = -1;
+	const _ACTIVATION_RESPONSE =  1;
 
 
 
@@ -10,14 +10,14 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 	 * HELPERS
 	 */
 
-	var _Neuron = function(weights) {
+	const _Neuron = function(weights) {
 
 		weights = typeof weights === 'number' ? weights : 1;
 
 
 		this.weights = [];
 
-		for (var i = 0; i < weights; i++) {
+		for (let w = 0; w < weights; w++) {
 			this.weights.push(Math.random() - Math.random());
 		}
 
@@ -26,7 +26,7 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 	};
 
-	var _Layer = function(neurons, weights) {
+	const _Layer = function(neurons, weights) {
 
 		neurons = typeof neurons === 'number' ? neurons : 1;
 		weights = typeof weights === 'number' ? weights : 1;
@@ -34,13 +34,13 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 		this.neurons = [];
 
-		for (var n = 0; n < neurons; n++) {
+		for (let n = 0; n < neurons; n++) {
 			this.neurons.push(new _Neuron(weights));
 		}
 
 	};
 
-	var _sigmoid = function(input, response) {
+	const _sigmoid = function(input, response) {
 		return (1 / (1 + Math.exp(-1 * input / response)));
 	};
 
@@ -50,9 +50,9 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 	 * IMPLEMENTATION
 	 */
 
-	var Composite = function(data) {
+	let Composite = function(data) {
 
-		var settings = lychee.assignsafe({
+		let settings = lychee.assignsafe({
 			inputs:  2,
 			outputs: 2,
 			layers:  1,
@@ -66,8 +66,8 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 		// Input Layer
 		this.layers.push(new _Layer(settings.neurons, settings.inputs));
 
-		// Processing Layers
-		for (var l = 0; l < layers - 1; l++) {
+		// Hidden Layers
+		for (let l = 0; l < layers - 1; l++) {
 			this.layers.push(new _Layer(settings.neurons, settings.neurons));
 		}
 
@@ -81,11 +81,11 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 		update: function(inputs) {
 
-			var outputs = [];
+			let outputs = [];
 
-			for (var l = 0; l < this.layers.length; l++) {
+			for (let l = 0; l < this.layers.length; l++) {
 
-				var layer = this.layers[l];
+				let layer = this.layers[l];
 
 				if (l > 0) {
 					inputs  = outputs;
@@ -93,15 +93,15 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 				}
 
 
-				for (var n = 0; n < layer.neurons.length; n++) {
+				for (let n = 0; n < layer.neurons.length; n++) {
 
-					var count  = 0;
-					var neuron = layer.neurons[n];
+					let count  = 0;
+					let neuron = layer.neurons[n];
 
-					var netinput = 0;
-					var wl       = neuron.weights.length;
+					let netinput = 0;
+					let wl       = neuron.weights.length;
 
-					for (var w = 0; w < wl - 1; w++) {
+					for (let w = 0; w < wl - 1; w++) {
 						netinput += neuron.weights[w] * inputs[count++];
 					}
 
@@ -120,10 +120,10 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 		countWeights: function() {
 
-			var amount = 0;
+			let amount = 0;
 
 
-			var layers = this.layers;
+			let layers = this.layers;
 			if (layers.length > 0) {
 
 				layers.forEach(function(layer) {
@@ -143,10 +143,10 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 		getWeights: function() {
 
-			var layers = this.layers;
+			let layers = this.layers;
 			if (layers.length > 0) {
 
-				var weights = [];
+				let weights = [];
 
 
 				layers.forEach(function(layer) {
@@ -173,11 +173,10 @@ lychee.define('lychee.ai.neural.Network').exports(function(lychee, global, attac
 
 		setWeights: function(weights) {
 
-			var layers = this.layers;
+			let layers = this.layers;
 			if (layers.length > 0) {
 
-				var index = 0;
-
+				let index = 0;
 
 				layers.forEach(function(layer) {
 

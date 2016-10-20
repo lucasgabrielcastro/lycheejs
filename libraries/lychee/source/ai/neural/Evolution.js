@@ -5,23 +5,22 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 	 * HELPERS
 	 */
 
-	var _get_genome = function(fitness) {
+	const _get_genome = function(population, fitness) {
 
-		var current = 0;
-		var genome  = null;
+		let genome    = null;
+		let threshold = 0;
 
-		for (var p = 0; p < this.length; p++) {
+		for (let p = 0, pl = population.length; p < pl; p++) {
 
-			current += this[p].fitness;
+			let agent  = population[p];
+			threshold += agent.fitness;
 
-
-			if (current >= fitness) {
-				genome = this[p];
+			if (threshold >= fitness) {
+				genome = agent;
 				break;
 			}
 
 		}
-
 
 		return genome;
 
@@ -33,9 +32,9 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 	 * IMPLEMENTATION
 	 */
 
-	var Composite = function(data) {
+	let Composite = function(data) {
 
-		var settings = Object.assign({}, data);
+		let settings = Object.assign({}, data);
 
 
 		this.fitness    = {
@@ -69,8 +68,8 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 
 		update: function() {
 
-			var oldpopulation = this.__population;
-			var newpopulation = [];
+			let oldpopulation = this.__population;
+			let newpopulation = [];
 
 
 			// 1. Sort Population by fitness
@@ -84,7 +83,7 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 
 			// 2. Calculate Fitness statistics
 
-			var fitness = this.fitness;
+			let fitness = this.fitness;
 
 			fitness.total   = 0;
 			fitness.average = 0;
@@ -105,12 +104,12 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 
 			// 3. Fill the population with fittest genomes first
 
-			var elite = (oldpopulation.length / 5) | 0;
+			let elite = (oldpopulation.length / 5) | 0;
 			if (elite % 2 === 1) {
 				elite++;
 			}
 
-			var survivors = oldpopulation.slice(oldpopulation.length - elite - 1, elite);
+			let survivors = oldpopulation.slice(oldpopulation.length - elite - 1, elite);
 			if (survivors.length > 0) {
 				newpopulation.push.apply(newpopulation, survivors);
 			}
@@ -120,10 +119,10 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 
 			while (newpopulation.length < oldpopulation.length) {
 
-				var zwgenome = _get_genome.call(oldpopulation, Math.random() * fitness.total);
-				var zzgenome = _get_genome.call(oldpopulation, Math.random() * fitness.total);
+				let zwgenome = _get_genome(oldpopulation, Math.random() * fitness.total);
+				let zzgenome = _get_genome(oldpopulation, Math.random() * fitness.total);
 
-				var babies = zwgenome.crossover(zzgenome);
+				let babies = zwgenome.crossover(zzgenome);
 				if (babies !== null) {
 
 					babies[0].mutate();
@@ -158,9 +157,9 @@ lychee.define('lychee.ai.neural.Evolution').exports(function(lychee, global, att
 				this.__population = [];
 
 
-				var weights = this.weights;
+				let weights = this.weights;
 
-				for (var p = 0; p < population; p++) {
+				for (let p = 0; p < population; p++) {
 					this.__population.push(new _Genome(weights));
 				}
 
