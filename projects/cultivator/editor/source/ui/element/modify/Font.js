@@ -34,6 +34,15 @@ lychee.define('app.ui.element.modify.Font').requires([
 		});
 
 
+		if (asset !== null) {
+
+			// TODO: Lazy change rendering event
+
+			this.trigger('change', [ asset ]);
+
+		}
+
+
 		// TODO: Remove this debug shit into a Preview element
 		global.setTimeout(function() {
 

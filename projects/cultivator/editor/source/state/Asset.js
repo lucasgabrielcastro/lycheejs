@@ -30,9 +30,7 @@ lychee.define('app.state.Asset').includes([
 		let layer   = this.queryLayer('ui', 'asset');
 		let modify  = this.queryLayer('ui', 'asset > modify');
 		let project = this.main.project;
-		let tmp     = value.split(/\s\((.*)\)$/g);
-		let path    = tmp[0];
-		let type    = tmp[1];
+		let ext     = value.split('.').pop();
 
 
 		if (modify !== null) {
@@ -40,23 +38,40 @@ lychee.define('app.state.Asset').includes([
 		}
 
 
-		if (type === 'Font') {
+		if (ext === 'fnt') {
 
-			let asset = new Font(project.identifier + '/source/' + path + '.fnt');
+			let asset = new Font(project.identifier + '/source/' + value);
 
 			asset.onload = function() {
 
-				layer.setEntity('modify', new _Font({
+				let element = new _Font({
 					width:  320,
 					height: 620,
 					font:   asset
-				}));
+				});
 
+				element.bind('change', function(val) {
+					console.log('changed value', val);
+				}, this);
+
+				layer.setEntity('modify', element);
 				layer.trigger('relayout');
 
-			};
+			}.bind(this);
 
 			asset.load();
+
+		} else if (ext === 'png') {
+
+			// TODO: Sprite support
+
+		} else if (ext === 'msc') {
+
+			// TODO: Music support
+
+		} else if (ext === 'snd') {
+
+			// TODO: Sound support
 
 		}
 
@@ -123,13 +138,13 @@ lychee.define('app.state.Asset').includes([
 					let map  = assets.indexOf(path + '.json');
 
 					if (ext === 'png' && map !== -1) {
-						filtered.push(path + ' (Sprite)');
+						filtered.push(path + '.png');
 					} else if (ext === 'fnt') {
-						filtered.push(path + ' (Font)');
+						filtered.push(path + '.fnt');
 					} else if (ext === 'msc') {
-						filtered.push(path + ' (Music)');
+						filtered.push(path + '.msc');
 					} else if (ext === 'snd') {
-						filtered.push(path + ' (Sound)');
+						filtered.push(path + '.snd');
 					}
 
 				});
