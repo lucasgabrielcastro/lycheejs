@@ -29,12 +29,13 @@ lychee.define('lychee.net.socket.WS').tags({
 
 }).exports(function(lychee, global, attachments) {
 
-	const _net         = global.require('net');
-	const _setInterval = global.setInterval;
-	const _Buffer      = global.require('buffer').Buffer;
-	const _Emitter     = lychee.import('lychee.event.Emitter');
-	const _Protocol    = lychee.import('lychee.net.protocol.WS');
-	const _SHA1        = lychee.import('lychee.crypto.SHA1');
+	const _net           = global.require('net');
+	const _clearInterval = global.clearInterval;
+	const _setInterval   = global.setInterval;
+	const _Buffer        = global.require('buffer').Buffer;
+	const _Emitter       = lychee.import('lychee.event.Emitter');
+	const _Protocol      = lychee.import('lychee.net.protocol.WS');
+	const _SHA1          = lychee.import('lychee.crypto.SHA1');
 
 
 
@@ -51,7 +52,7 @@ lychee.define('lychee.net.socket.WS').tags({
 
 				// XXX: nwjs has global scope problems
 				// XXX: Internal Buffer is not our global.Buffer interface
-				blob = new global.Buffer(blob);
+				blob = _Buffer.from(blob);
 
 
 				let chunks = protocol.receive(blob);
@@ -475,11 +476,22 @@ lychee.define('lychee.net.socket.WS').tags({
 								socket.removeAllListeners('timeout');
 
 
-								_setInterval(function() {
+								let interval_id = _setInterval(function() {
 
-									let chunk = protocol.ping();
-									if (chunk !== null) {
-										socket.write(chunk);
+									if (socket.writable) {
+
+										let chunk = protocol.ping();
+										if (chunk !== null) {
+											// XXX: nwjs has global scope problems
+											// XXX: Internal Buffer is not our global.Buffer interface
+											socket.write(_Buffer.from(chunk));
+										}
+
+									} else {
+
+										_clearInterval(interval_id);
+										interval_id = null;
+
 									}
 
 								}.bind(this), 60000);
@@ -556,7 +568,7 @@ lychee.define('lychee.net.socket.WS').tags({
 					if (chunk !== null) {
 						// XXX: nwjs has global scope problems
 						// XXX: Internal Buffer is not our global.Buffer interface
-						connection.write(chunk.toString(enc), enc);
+						connection.write(_Buffer.from(chunk));
 					}
 
 				}

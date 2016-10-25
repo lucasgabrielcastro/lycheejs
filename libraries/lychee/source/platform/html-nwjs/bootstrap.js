@@ -44,7 +44,10 @@
 				lychee.ROOT.lychee = selfpath.substr(0, tmp1).substr(tmp2 + 3);
 			} else if (tmp1 !== -1) {
 				lychee.ROOT.lychee = selfpath.substr(0, tmp1);
-			} else if (typeof process !== 'undefined') {
+			}
+
+
+			if (typeof process !== 'undefined') {
 				cwd      = process.cwd() || '';
 				selfpath = cwd.split('/').slice(0, -1).join('/');
 			}
