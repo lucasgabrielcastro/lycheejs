@@ -924,7 +924,6 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 				_bootstrap_environment.call(this);
 
 
-				let path = lychee.environment.resolve(target);
 				let that = this;
 
 
@@ -944,7 +943,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 				}
 
 
-				let asset = new lychee.Asset(path, null, false);
+				let asset = new lychee.Asset(target, null, false);
 				if (asset !== null) {
 					asset.load();
 				}

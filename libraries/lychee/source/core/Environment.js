@@ -901,14 +901,15 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 
 
 		this.__cache    = {
-			active:   false,
-			start:    0,
-			end:      0,
-			retries:  0,
-			timeout:  0,
-			load:     [],
-			ready:    [],
-			track:    []
+			active:        false,
+			assimilations: [],
+			start:         0,
+			end:           0,
+			retries:       0,
+			timeout:       0,
+			load:          [],
+			ready:         [],
+			track:         []
 		};
 		this.__features = {};
 
@@ -1148,7 +1149,24 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 					}
 
 
-					if (newPackageId !== null && newPackageId !== oldPackageId) {
+					let assimilation = true;
+
+					for (let p = 0, pl = this.packages.length; p < pl; p++) {
+
+						let id = this.packages[p].id;
+						if (id === oldPackageId || id === newPackageId) {
+							assimilation = false;
+							break;
+						}
+
+					}
+
+
+					if (assimilation === true) {
+
+						this.__cache.assimilations.push(definition.id);
+
+					} else if (newPackageId !== null && newPackageId !== oldPackageId) {
 
 						if (this.debug === true) {
 							this.global.console.log('lychee-Environment (' + this.id + '): Injecting Definition "' + definition.id + '" as "' + newPackageId + '.' + definition.classId + '"');
@@ -1315,6 +1333,22 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 							if (intervalId !== null) {
 								clearInterval(intervalId);
 								intervalId = null;
+							}
+
+
+							let assimilations = cache.assimilations;
+							if (assimilations.length > 0) {
+
+								for (let a = 0, al = assimilations.length; a < al; a++) {
+
+									let identifier = assimilations[a];
+									let definition = that.definitions[identifier] || null;
+									if (definition !== null) {
+										_export_definition.call(that, definition);
+									}
+
+								}
+
 							}
 
 
