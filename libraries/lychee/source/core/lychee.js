@@ -914,6 +914,56 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 		 * CUSTOM API
 		 */
 
+		assimilate: function(target) {
+
+			target = typeof target === 'string' ? target : null;
+
+
+			if (target !== null) {
+
+				_bootstrap_environment.call(this);
+
+
+				let path = lychee.environment.resolve(target);
+				let that = this;
+
+
+				// XXX: First sandboxed hierarchy
+				if (that.environment.sandbox === true) {
+					that = that.environment.global.lychee;
+				}
+
+				// XXX: Second sandboxed hierarchy
+				if (that.environment.sandbox === true) {
+					that = that.environment.global.lychee;
+				}
+
+				// XXX: Third sandboxed hierarchy
+				if (that.environment.sandbox === true) {
+					that = that.environment.global.lychee;
+				}
+
+
+				let asset = new lychee.Asset(path, null, false);
+				if (asset !== null) {
+					asset.load();
+				}
+
+
+				return asset;
+
+			} else {
+
+				console.warn('lychee.assimilate: Invalid target');
+				console.info('lychee.assimilate: Use lychee.assimilate(target) where target is a path to an Asset');
+
+			}
+
+
+			return null;
+
+		},
+
 		define: function(identifier) {
 
 			identifier = typeof identifier === 'string' ? identifier : null;
@@ -953,6 +1003,11 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 
 				return definition;
+
+			} else {
+
+				console.warn('lychee.define: Invalid identifier');
+				console.info('lychee.define: Use lychee.define(id).exports(closure)');
 
 			}
 
