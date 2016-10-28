@@ -1164,6 +1164,11 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 
 					if (assimilation === true) {
 
+						if (this.debug === true) {
+							this.global.console.log('lychee-Environment (' + this.id + '): Assimilating Definition "' + definition.id + '"');
+						}
+
+
 						this.__cache.assimilations.push(definition.id);
 
 					} else if (newPackageId !== null && newPackageId !== oldPackageId) {
