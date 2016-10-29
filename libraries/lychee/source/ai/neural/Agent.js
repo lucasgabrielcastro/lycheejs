@@ -5,11 +5,11 @@ lychee.define('lychee.ai.neural.Agent').requires([
 	'lychee.ai.neural.Network'
 ]).exports(function(lychee, global, attachments) {
 
-	var _Evolution  = lychee.import('lychee.ai.neural.Evolution');
-	var _Genome     = lychee.import('lychee.ai.neural.Genome');
-	var _Network    = lychee.import('lychee.ai.neural.Network');
-	var _instances  = {};
-	var _evolutions = {};
+	const _Evolution  = lychee.import('lychee.ai.neural.Evolution');
+	const _Genome     = lychee.import('lychee.ai.neural.Genome');
+	const _Network    = lychee.import('lychee.ai.neural.Network');
+	const _INSTANCES  = {};
+	const _EVOLUTIONS = {};
 
 
 
@@ -17,15 +17,15 @@ lychee.define('lychee.ai.neural.Agent').requires([
 	 * HELPERS
 	 */
 
-	var _connect = function() {
+	const _connect = function() {
 
-		var id = this.id;
+		let id = this.id;
 
 
-		var instances = _instances[id] || null;
+		let instances = _INSTANCES[id] || null;
 		if (instances === null) {
 
-			instances = _instances[id] = [ this ];
+			instances = _INSTANCES[id] = [ this ];
 
 		} else {
 
@@ -36,11 +36,11 @@ lychee.define('lychee.ai.neural.Agent').requires([
 		}
 
 
-		var evolution = _evolutions[id] || null;
+		let evolution = _EVOLUTIONS[id] || null;
 		if (evolution === null) {
 
-			var network = this.__network;
-			var weights = 0;
+			let network = this.__network;
+			let weights = 0;
 
 			if (network !== null) {
 				weights = network.countWeights();
@@ -66,15 +66,15 @@ lychee.define('lychee.ai.neural.Agent').requires([
 
 	};
 
-	var _disconnect = function() {
+	const _disconnect = function() {
 
-		var id = this.id;
+		let id = this.id;
 
 
-		var instances = _instances[id] || null;
+		let instances = _INSTANCES[id] || null;
 		if (instances !== null) {
 
-			var index = instances.indexOf(this);
+			let index = instances.indexOf(this);
 			if (index !== -1) {
 				instances.splice(index, 1);
 			}
@@ -82,7 +82,7 @@ lychee.define('lychee.ai.neural.Agent').requires([
 		}
 
 
-		var evolution = this.__evolution;
+		let evolution = this.__evolution;
 		if (evolution !== null) {
 			this.__evolution = null;
 		}
@@ -95,9 +95,9 @@ lychee.define('lychee.ai.neural.Agent').requires([
 	 * IMPLEMENTATION
 	 */
 
-	var Composite = function(data) {
+	let Composite = function(data) {
 
-		var settings = Object.assign({}, data);
+		let settings = Object.assign({}, data);
 
 
 		this.id = 'lychee-ai-neural-Agent-' + _id++;
@@ -121,7 +121,7 @@ lychee.define('lychee.ai.neural.Agent').requires([
 
 /*
  * TODO: This might be some crap shit, so evaluate this
- * this.network.putWeights(this.__evolution.population[_instances[this.id].indexOf(this)].weights);
+ * this.network.putWeights(this.__evolution.population[_INSTANCES[this.id].indexOf(this)].weights);
  */
 
 	};

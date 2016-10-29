@@ -7,9 +7,9 @@ lychee.define('harvester.data.Project').requires([
 	'lychee.event.Emitter'
 ]).exports(function(lychee, global, attachments) {
 
-	var _Filesystem = lychee.import('harvester.data.Filesystem');
-	var _Package    = lychee.import('harvester.data.Package');
-	var _Server     = lychee.import('harvester.data.Server');
+	const _Filesystem = lychee.import('harvester.data.Filesystem');
+	const _Package    = lychee.import('harvester.data.Package');
+	const _Server     = lychee.import('harvester.data.Server');
 
 
 
@@ -17,7 +17,7 @@ lychee.define('harvester.data.Project').requires([
 	 * IMPLEMENTATION
 	 */
 
-	var Composite = function(identifier) {
+	let Composite = function(identifier) {
 
 		identifier = typeof identifier === 'string' ? identifier : null;
 
@@ -46,12 +46,12 @@ lychee.define('harvester.data.Project').requires([
 
 		serialize: function() {
 
-			var data = lychee.event.Emitter.prototype.serialize.call(this);
+			let data = lychee.event.Emitter.prototype.serialize.call(this);
 			data['constructor'] = 'harvester.data.Project';
 
 
-			var settings = data['arguments'] || {};
-			var blob     = data['blob'] || {};
+			let settings = data['arguments'] || {};
+			let blob     = data['blob'] || {};
 
 
 			if (this.filesystem !== null) blob.filesystem = lychee.serialize(this.filesystem);
