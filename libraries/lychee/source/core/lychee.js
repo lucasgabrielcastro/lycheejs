@@ -828,6 +828,10 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 					}
 
+				} else if (data instanceof Object) {
+
+					instance = data;
+
 				}
 
 
