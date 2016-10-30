@@ -15,9 +15,8 @@ lychee.define('harvester.Watcher').requires([
 		Fertilizer: lychee.import('harvester.mod.Fertilizer'),
 		Packager:   lychee.import('harvester.mod.Packager'),
 		Server:     lychee.import('harvester.mod.Server'),
-		Strainer:   lychee.import('harvester.mod.Strainer'),
-		Updater:    lychee.import('harvester.mod.Updater'),
-		Watcher:    lychee.import('harvester.mod.Watcher')
+		// Strainer:   lychee.import('harvester.mod.Strainer'),
+		// Updater:    lychee.import('harvester.mod.Updater')
 	};
 
 
