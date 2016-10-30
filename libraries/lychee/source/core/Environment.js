@@ -115,6 +115,8 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 			break;
 
 			case 'addEventListener':
+			case 'clearInterval':
+			case 'clearTimeout':
 			case 'createElement':
 			case 'on':
 			case 'querySelectorAll':
