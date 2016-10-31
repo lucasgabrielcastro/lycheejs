@@ -1552,6 +1552,8 @@
 
 			if (id === 'child_process') return {};
 			if (id === 'fs')            return {};
+			if (id === 'http')          return {};
+			if (id === 'https')         return {};
 			if (id === 'net')           return {};
 			if (id === 'path')          return {};
 

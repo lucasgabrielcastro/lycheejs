@@ -1,17 +1,17 @@
 #!/usr/local/bin/lycheejs-helper env:node
 
 
-var root = require('path').resolve(__dirname, '../');
-var fs   = require('fs');
-var path = require('path');
+const _fs   = require('fs');
+const _path = require('path');
+const _ROOT = _path.resolve(__dirname, '../');
 
 
-if (fs.existsSync(root + '/libraries/lychee/build/node/core.js') === false) {
-	require(root + '/bin/configure.js');
+if (_fs.existsSync(_ROOT + '/libraries/lychee/build/node/core.js') === false) {
+	require(_ROOT + '/bin/configure.js');
 }
 
 
-var lychee = require(root + '/libraries/lychee/build/node/core.js')(root);
+const lychee = require(_ROOT + '/libraries/lychee/build/node/core.js')(_ROOT);
 
 
 
@@ -19,9 +19,9 @@ var lychee = require(root + '/libraries/lychee/build/node/core.js')(root);
  * USAGE
  */
 
-var _print_help = function() {
+const _print_help = function() {
 
-	var profiles = fs.readdirSync(root + '/bin/harvester').map(function(value) {
+	let profiles = _fs.readdirSync(_ROOT + '/bin/harvester').map(function(value) {
 		return '' + value.substr(0, value.indexOf('.json')) + '';
 	});
 
@@ -39,7 +39,7 @@ var _print_help = function() {
 	console.log('Available Profiles:                                         ');
 	console.log('                                                            ');
 	profiles.forEach(function(profile) {
-		var diff = ('                                                        ').substr(profile.length);
+		let diff = ('                                                        ').substr(profile.length);
 		console.log('    ' + profile + diff);
 	});
 	console.log('                                                            ');
@@ -58,81 +58,11 @@ var _print_help = function() {
 
 };
 
-
-
-var _settings = (function() {
-
-	var args     = process.argv.slice(2).filter(val => val !== '');
-	var settings = {
-		action:  null,
-		profile: null,
-		debug:   false,
-		sandbox: false
-	};
-
-
-	var action       = args.find(val => /(start|status|restart|stop)/g.test(val));
-	var profile      = args.find(val => /([A-Za-z0-9-_.])/g.test(val) && val !== action);
-	var debug_flag   = args.find(val => /--([debug]{5})/g.test(val));
-	var sandbox_flag = args.find(val => /--([sandbox]{7})/g.test(val));
-
-
-	if (action === 'start') {
-
-		if (profile !== undefined) {
-
-			settings.action = 'start';
-
-
-			try {
-
-				var stat1 = fs.lstatSync(root + '/bin/harvester/' + profile + '.json');
-				if (stat1.isFile()) {
-
-					var json = null;
-					try {
-						json = JSON.parse(fs.readFileSync(root + '/bin/harvester/' + profile + '.json', 'utf8'));
-					} catch(e) {
-					}
-
-					if (json !== null) {
-						settings.profile = json;
-						settings.debug   = json.debug   === true;
-						settings.sandbox = json.sandbox === true;
-					}
-
-				}
-
-			} catch(e) {
-			}
-
-		}
-
-	} else if (action !== undefined) {
-
-		settings.action = action;
-
-	}
-
-
-	if (debug_flag !== undefined) {
-		settings.debug = true;
-	}
-
-	if (sandbox_flag !== undefined) {
-		settings.sandbox = true;
-	}
-
-
-	return settings;
-
-})();
-
-var _clear_pid = function() {
+const _clear_pid = function() {
 
 	try {
 
-		fs.unlinkSync(root + '/bin/harvester.pid');
+		_fs.unlinkSync(_ROOT + '/bin/harvester.pid');
 		return true;
 
 	} catch(e) {
@@ -143,13 +73,13 @@ var _clear_pid = function() {
 
 };
 
-var _read_pid = function() {
+const _read_pid = function() {
 
-	var pid = null;
+	let pid = null;
 
 	try {
 
-		pid = fs.readFileSync(root + '/bin/harvester.pid', 'utf8');
+		pid = _fs.readFileSync(_ROOT + '/bin/harvester.pid', 'utf8');
 
 		if (!isNaN(parseInt(pid, 10))) {
 			pid = parseInt(pid, 10);
@@ -163,11 +93,11 @@ var _read_pid = function() {
 
 };
 
-var _write_pid = function() {
+const _write_pid = function() {
 
 	try {
 
-		fs.writeFileSync(root + '/bin/harvester.pid', process.pid);
+		_fs.writeFileSync(_ROOT + '/bin/harvester.pid', process.pid);
 		return true;
 
 	} catch(e) {
@@ -178,11 +108,11 @@ var _write_pid = function() {
 
 };
 
-var _bootup = function(settings) {
+const _bootup = function(settings) {
 
 	console.info('BOOTUP (' + process.pid + ')');
 
-	var environment = new lychee.Environment({
+	let environment = new lychee.Environment({
 		id:       'harvester',
 		debug:    settings.debug === true,
 		sandbox:  true,
@@ -205,8 +135,8 @@ var _bootup = function(settings) {
 
 		if (sandbox !== null) {
 
-			var lychee    = sandbox.lychee;
-			var harvester = sandbox.harvester;
+			let lychee    = sandbox.lychee;
+			let harvester = sandbox.harvester;
 
 
 			// Show more debug messages
@@ -260,15 +190,85 @@ var _bootup = function(settings) {
 
 
 
+const _SETTINGS = (function() {
+
+	let args     = process.argv.slice(2).filter(val => val !== '');
+	let settings = {
+		action:  null,
+		profile: null,
+		debug:   false,
+		sandbox: false
+	};
+
+
+	let action       = args.find(val => /(start|status|restart|stop)/g.test(val));
+	let profile      = args.find(val => /([A-Za-z0-9-_.])/g.test(val) && val !== action);
+	let debug_flag   = args.find(val => /--([debug]{5})/g.test(val));
+	let sandbox_flag = args.find(val => /--([sandbox]{7})/g.test(val));
+
+
+	if (action === 'start') {
+
+		if (profile !== undefined) {
+
+			settings.action = 'start';
+
+
+			try {
+
+				let stat1 = _fs.lstatSync(_ROOT + '/bin/harvester/' + profile + '.json');
+				if (stat1.isFile()) {
+
+					let json = null;
+					try {
+						json = JSON.parse(_fs.readFileSync(_ROOT + '/bin/harvester/' + profile + '.json', 'utf8'));
+					} catch(e) {
+					}
+
+					if (json !== null) {
+						settings.profile = json;
+						settings.debug   = json.debug   === true;
+						settings.sandbox = json.sandbox === true;
+					}
+
+				}
+
+			} catch(e) {
+			}
+
+		}
+
+	} else if (action !== undefined) {
+
+		settings.action = action;
+
+	}
+
+
+	if (debug_flag !== undefined) {
+		settings.debug = true;
+	}
+
+	if (sandbox_flag !== undefined) {
+		settings.sandbox = true;
+	}
+
+
+	return settings;
+
+})();
+
+
+
 (function(settings) {
 
 	/*
 	 * IMPLEMENTATION
 	 */
 
-	var action      = settings.action;
-	var has_action  = settings.action !== null;
-	var has_profile = settings.profile !== null;
+	let action      = settings.action;
+	let has_action  = settings.action !== null;
+	let has_profile = settings.profile !== null;
 
 
 	if (action === 'start' && has_profile) {
@@ -280,7 +280,7 @@ var _bootup = function(settings) {
 
 	} else if (action === 'status') {
 
-		var pid = _read_pid();
+		let pid = _read_pid();
 		if (pid !== null) {
 			console.log('Running (' + pid + ')');
 			process.exit(0);
@@ -292,12 +292,12 @@ var _bootup = function(settings) {
 
 	} else if (action === 'stop') {
 
-		var pid = _read_pid();
+		let pid = _read_pid();
 		if (pid !== null) {
 
 			console.info('SHUTDOWN (' + pid + ')');
 
-			var killed = false;
+			let killed = false;
 
 			try {
 
@@ -343,5 +343,5 @@ var _bootup = function(settings) {
 
 	}
 
-})(_settings);
+})(_SETTINGS);
 

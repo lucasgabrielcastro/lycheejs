@@ -1,17 +1,17 @@
 #!/usr/local/bin/lycheejs-helper env:node
 
 
-var root = require('path').resolve(__dirname, '../');
-var fs   = require('fs');
-var path = require('path');
+const _fs   = require('fs');
+const _path = require('path');
+const _ROOT = _path.resolve(__dirname, '../');
 
 
-if (fs.existsSync(root + '/libraries/lychee/build/node/core.js') === false) {
-	require(root + '/bin/configure.js');
+if (_fs.existsSync(_ROOT + '/libraries/lychee/build/node/core.js') === false) {
+	require(_ROOT + '/bin/configure.js');
 }
 
 
-var lychee = require(root + '/libraries/lychee/build/node/core.js')(root);
+const lychee = require(_ROOT + '/libraries/lychee/build/node/core.js')(_ROOT);
 
 
 
@@ -19,16 +19,16 @@ var lychee = require(root + '/libraries/lychee/build/node/core.js')(root);
  * USAGE
  */
 
-var _print_help = function() {
+const _print_help = function() {
 
-	var libraries = fs.readdirSync(root + '/libraries').sort().filter(function(value) {
-		return fs.existsSync(root + '/libraries/' + value + '/lychee.pkg');
+	let libraries = _fs.readdirSync(_ROOT + '/libraries').sort().filter(function(value) {
+		return _fs.existsSync(_ROOT + '/libraries/' + value + '/lychee.pkg');
 	}).map(function(value) {
 		return '/libraries/' + value;
 	});
 
-	var projects = fs.readdirSync(root + '/projects').sort().filter(function(value) {
-		return fs.existsSync(root + '/projects/' + value + '/lychee.pkg');
+	let projects = _fs.readdirSync(_ROOT + '/projects').sort().filter(function(value) {
+		return _fs.existsSync(_ROOT + '/projects/' + value + '/lychee.pkg');
 	}).map(function(value) {
 		return '/projects/' + value;
 	});
@@ -47,14 +47,14 @@ var _print_help = function() {
 	console.log('Available Libraries:                                ');
 	console.log('                                                    ');
 	libraries.forEach(function(library) {
-		var diff = ('                                                ').substr(library.length);
+		let diff = ('                                                ').substr(library.length);
 		console.log('    ' + library + diff);
 	});
 	console.log('                                                    ');
 	console.log('Available Projects:                                 ');
 	console.log('                                                    ');
 	projects.forEach(function(project) {
-		var diff = ('                                                ').substr(project.length);
+		let diff = ('                                                ').substr(project.length);
 		console.log('    ' + project + diff);
 	});
 	console.log('                                                   ');
@@ -72,86 +72,11 @@ var _print_help = function() {
 
 };
 
-
-
-var _settings = (function() {
-
-	var args     = process.argv.slice(2).filter(val => val !== '');
-	var settings = {
-		action:   null,
-		project:  null,
-		library:  null
-	};
-
-
-	var action       = args.find(val => /^(init|fork|pull|push)/g.test(val));
-	var library      = args.find(val => /^\/(libraries|projects)\/([A-Za-z0-9-_\/]+)$/g.test(val));
-	var project      = args.find(val => /--project=\/(libraries|projects)\/([A-Za-z0-9-_\/]+)/g.test(val));
-	var debug_flag   = args.find(val => /--([debug]{5})/g.test(val));
-	var sandbox_flag = args.find(val => /--([sandbox]{7})/g.test(val));
-
-
-	if (project !== undefined) {
-
-		var tmp = project.substr(10);
-		if (tmp.indexOf('.') === -1) {
-
-			try {
-
-				var stat1 = fs.lstatSync(root + tmp);
-				if (stat1.isDirectory()) {
-					settings.project = tmp;
-				}
-
-			} catch(e) {
-
-				settings.project = null;
-
-			}
-
-		}
-
-	}
-
-
-	if (action === 'pull' || action === 'fork') {
-
-		if (library !== undefined) {
-
-			settings.action = action;
-
-
-			try {
-				var stat1 = fs.lstatSync(root + library);
-				var stat2 = fs.lstatSync(root + library + '/lychee.pkg');
-				if (stat1.isDirectory() && stat2.isFile()) {
-					settings.library = library;
-				}
-
-			} catch(e) {
-
-				settings.library = null;
-
-			}
-
-		}
-
-	} else if (action !== undefined) {
-
-		settings.action = action;
-
-	}
-
-
-	return settings;
-
-})();
-
-var _bootup = function(settings) {
+const _bootup = function(settings) {
 
 	console.info('BOOTUP (' + process.pid + ')');
 
-	var environment = new lychee.Environment({
+	let environment = new lychee.Environment({
 		id:      'breeder',
 		debug:   false,
 		sandbox: false,
@@ -175,9 +100,9 @@ var _bootup = function(settings) {
 
 		if (sandbox !== null) {
 
-			var lychee     = sandbox.lychee;
-			var breeder    = sandbox.breeder;
-			var fertilizer = sandbox.fertilizer;
+			let lychee     = sandbox.lychee;
+			let breeder    = sandbox.breeder;
+			let fertilizer = sandbox.fertilizer;
 
 
 			// Show less debug messages
@@ -227,15 +152,91 @@ var _bootup = function(settings) {
 
 
 
+const _SETTINGS = (function() {
+
+	let args     = process.argv.slice(2).filter(val => val !== '');
+	let settings = {
+		action:   null,
+		project:  null,
+		library:  null
+	};
+
+
+	let action       = args.find(val => /^(init|fork|pull|push)/g.test(val));
+	let library      = args.find(val => /^\/(libraries|projects)\/([A-Za-z0-9-_\/]+)$/g.test(val));
+	let project      = args.find(val => /--project=\/(libraries|projects)\/([A-Za-z0-9-_\/]+)/g.test(val));
+	let debug_flag   = args.find(val => /--([debug]{5})/g.test(val));
+	let sandbox_flag = args.find(val => /--([sandbox]{7})/g.test(val));
+
+
+	if (project !== undefined) {
+
+		let tmp = project.substr(10);
+		if (tmp.indexOf('.') === -1) {
+
+			try {
+
+				let stat1 = _fs.lstatSync(_ROOT + tmp);
+				if (stat1.isDirectory()) {
+					settings.project = tmp;
+				}
+
+			} catch(e) {
+
+				settings.project = null;
+
+			}
+
+		}
+
+	}
+
+
+	if (action === 'pull' || action === 'fork') {
+
+		if (library !== undefined) {
+
+			settings.action = action;
+
+
+			try {
+
+				let stat1 = _fs.lstatSync(_ROOT + library);
+				let stat2 = _fs.lstatSync(_ROOT + library + '/lychee.pkg');
+				if (stat1.isDirectory() && stat2.isFile()) {
+					settings.library = library;
+				}
+
+			} catch(e) {
+
+				settings.library = null;
+
+			}
+
+		}
+
+	} else if (action !== undefined) {
+
+		settings.action = action;
+
+	}
+
+
+	return settings;
+
+})();
+
+
+
 (function(settings) {
 
 	/*
 	 * IMPLEMENTATION
 	 */
 
-	var action      = settings.action;
-	var has_project = settings.project !== null;
-	var has_library = settings.library !== null;
+	let action      = settings.action;
+	let has_project = settings.project !== null;
+	let has_library = settings.library !== null;
 
 
 	if (action === 'init' && has_project) {
@@ -279,5 +280,5 @@ var _bootup = function(settings) {
 
 	}
 
-})(_settings);
+})(_SETTINGS);
 

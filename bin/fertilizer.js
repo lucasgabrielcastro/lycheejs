@@ -85,7 +85,7 @@ const _bootup = function(settings) {
 	let environment = new lychee.Environment({
 		id:       'fertilizer',
 		debug:    settings.debug === true,
-		sandbox:  true,
+		sandbox:  settings.debug === true ? false : settings.sandbox === true,
 		build:    'fertilizer.Main',
 		timeout:  3000,
 		packages: [
@@ -292,9 +292,9 @@ const _SETTINGS = (function() {
 
 })();
 
-(function(project, identifier, settings, auto) {
+(function(settings) {
 
-	if (auto === true) return;
+	if (settings.auto === true) return;
 
 
 
@@ -302,25 +302,27 @@ const _SETTINGS = (function() {
 	 * IMPLEMENTATION
 	 */
 
-	let has_project    = project !== null;
-	let has_identifier = identifier !== null;
-	let has_settings   = settings !== null;
+	let has_project     = settings.project !== null;
+	let has_identifier  = settings.identifier !== null;
+	let has_environment = settings.environment !== null;
 
 
-	if (has_project && has_identifier && has_settings) {
+	if (has_project && has_identifier && has_environment) {
 
 		_bootup({
 			debug:      settings.debug   === true,
 			sandbox:    settings.sandbox === true,
-			project:    project,
-			identifier: identifier,
-			settings:   settings
+			project:    settings.project,
+			identifier: settings.identifier,
+			settings:   settings.environment
 		});
 
 	} else if (has_project) {
 
 		_bootup({
-			project:    project,
+			debug:      settings.debug   === true,
+			sandbox:    settings.sandbox === true,
+			project:    settings.project,
 			identifier: null,
 			settings:   null
 		});
@@ -335,5 +337,5 @@ const _SETTINGS = (function() {
 
 	}
 
-})(_SETTINGS.project, _SETTINGS.identifier, _SETTINGS.environment, _SETTINGS.auto);
+})(_SETTINGS);
 
