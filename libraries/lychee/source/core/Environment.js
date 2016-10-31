@@ -522,7 +522,7 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 			namespace[classId].displayName = definition.id;
 
 
-			this.global.console.error('lychee-Environment (' + this.id + '): Invalid Definition "' + definition.id + '", it is a Dummy now.');
+			this.global.console.error('lychee-Environment (' + this.id + '): Invalid Definition "' + definition.id + '", it is replaced with a Dummy Composite');
 
 		}
 
