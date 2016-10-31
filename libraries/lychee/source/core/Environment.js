@@ -101,123 +101,73 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 	 * HELPERS
 	 */
 
-	const _mock_feature = function(name) {
+	const _detect_features = function(source) {
 
-		switch (name) {
-
-			case 'href':
-				return '1337';
-			break;
-
-			case 'innerWidth':
-			case 'innerHeight':
-				return 1337;
-			break;
-
-			case 'addEventListener':
-			case 'clearInterval':
-			case 'clearTimeout':
-			case 'createElement':
-			case 'on':
-			case 'querySelectorAll':
-			case 'read':
-			case 'requestAnimationFrame':
-			case 'require':
-			case 'setInterval':
-			case 'setTimeout':
-			case 'write':
-			case 'CanvasRenderingContext2D':
-			case 'FileReader':
-			case 'WebSocket':
-			case 'XMLHttpRequest':
-				return function(){};
-			break;
-
-			case 'body':
-			case 'document':
-			case 'location':
-			case 'localStorage':
-			case 'process':
-			case 'sessionStorage':
-			case 'stdin':
-			case 'stdout':
-			case 'Storage':
-				return _mock_detector({});
-			break;
-
-			default:
-			break;
-
+		if (typeof Proxy === 'undefined') {
+			return source;
 		}
 
 
-		console.error('lychee.Environment: Unknown Datatype ("' + name + '")');
+		let clone = {};
+		let proxy = new Proxy(clone, {
 
-		return undefined;
+			get: function(target, name) {
 
-	};
+				// XXX: Remove this and console will crash your program
+				if (name === 'splice') return undefined;
 
-	const _mock_detector = function(source) {
 
-		if (typeof Proxy !== 'undefined') {
-
-			let clone = {};
-			let proxy = new Proxy(clone, {
-				get: function(target, name) {
-
-					if (name === 'splice') {
-						return undefined;
-					} else if (target[name] !== undefined) {
-						return target[name];
-					}
-
+				if (target[name] === undefined) {
 
 					let type = typeof source[name];
-					if (/number|string|function/g.test(type)) {
+					if (/boolean|number|string|function/g.test(type)) {
 						target[name] = source[name];
 					} else if (/object/g.test(type)) {
-						target[name] = _mock_detector(source[name]);
+						target[name] = _detect_features(source[name]);
 					} else if (/undefined/g.test(type)) {
-						target[name] = _mock_feature(name);
+						target[name] = undefined;
 					}
 
 
-					return target[name];
+					if (target[name] === undefined) {
+						console.error('lychee.Environment: Unknown feature (data type) "' + name + '" in bootstrap.js');
+					}
 
 				}
-			});
 
 
-			proxy.toJSON = function() {
+				return target[name];
 
-				let data = {};
+			}
 
-				Object.keys(clone).map(function(key) {
+		});
 
-					let typ = typeof clone[key];
-					if (/toJSON/g.test(key)) {
-						// XXX: Do nothing
-					} else if (/number|string/g.test(typ)) {
-						data[key] = typ;
-					} else if (/object/g.test(typ)) {
+
+		proxy.toJSON = function() {
+
+			let data = {};
+
+			Object.keys(clone).forEach(function(key) {
+
+				if (/toJSON/g.test(key) === false) {
+
+					let type = typeof clone[key];
+					if (/boolean|number|string|function/g.test(type)) {
+						data[key] = type;
+					} else if (/object/g.test(type)) {
 						data[key] = clone[key];
-					} else if (/function/g.test(typ)) {
-						data[key] = 'function';
 					}
 
-				});
+				}
 
-				return data;
+			});
 
-			};
+			return data;
 
-
-			return proxy;
-
-		}
+		};
 
 
-		return null;
+		return proxy;
 
 	};
 
@@ -226,35 +176,25 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 		let target = this;
 		let keys   = Object.keys(features);
 
-		if (keys.length > 0) {
+		Object.keys(features).forEach(function(key) {
 
-			keys.forEach(function(key) {
+			let type = features[key];
+			if (/boolean|number|string|function/g.test(type)) {
 
-				let type = features[key];
-				if (type instanceof Object) {
+				target[key] = source[key];
 
-					if (source[key] instanceof Object) {
+			} else if (typeof type === 'object') {
 
-						target[key] = source[key];
-						_inject_features.call(target[key], source[key], type);
+				if (typeof source[key] === 'object') {
 
-					}
-
-				} else {
-
-					// XXX: This is pretty much the only Exception -_-
-					if (key === 'href') return;
-
-
-					if (/number|string|function/g.test(type)) {
-						target[key] = source[key];
-					}
+					target[key] = source[key];
+					_inject_features.call(target[key], source[key], type);
 
 				}
 
-			});
+			}
 
-		}
+		});
 
 	};
 
@@ -272,7 +212,7 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 
 		if (definition._supports !== null) {
 
-			let detector = _mock_detector(global);
+			let detector = _detect_features(Composite.__FEATURES || global);
 			if (detector !== null) {
 
 				supported = definition._supports.call(detector, lychee, detector);
@@ -956,6 +896,7 @@ lychee.Environment = typeof lychee.Environment !== 'undefined' ? lychee.Environm
 	 * BOOTSTRAP API
 	 */
 
+	Composite.__FEATURES = null;
 	Composite.__FILENAME = null;
 
 
