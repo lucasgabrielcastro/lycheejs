@@ -153,12 +153,12 @@ const _bootup = function(settings) {
 			_write_pid();
 
 
-			process.on('SIGHUP',  function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
-			process.on('SIGINT',  function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
-			process.on('SIGQUIT', function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
-			process.on('SIGABRT', function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
-			process.on('SIGTERM', function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
-			process.on('error',   function() { sandbox.MAIN.destroy(); _clear_pid(); this.exit(1); });
+			process.on('SIGHUP',  function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
+			process.on('SIGINT',  function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
+			process.on('SIGQUIT', function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
+			process.on('SIGABRT', function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
+			process.on('SIGTERM', function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
+			process.on('error',   function() { _clear_pid(); sandbox.MAIN.destroy(); this.exit(1); });
 			process.on('exit',    function() {});
 
 
@@ -169,8 +169,8 @@ const _bootup = function(settings) {
 
 				console.warn('harvester: [ESC] pressed, exiting ...');
 
-				sandbox.MAIN.destroy();
 				_clear_pid();
+				sandbox.MAIN.destroy();
 
 			}, this);
 
