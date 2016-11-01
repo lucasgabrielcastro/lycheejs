@@ -14,9 +14,21 @@ As we cannot influence decisions of our Artificial Intelligence,
 some things might break temporarily on the `development` and
 `humansneednotapply` branch.
 
-The update behaviour is changed as explained in the [RELEASE Guide](./guides/RELEASE.md).
+The update behaviour is changed as explained in the
+[RELEASE Guide](./guides/RELEASE.md). All entries in the changelog
+are listed in this specific order: `changed`, `removed`, `added`
+and `fixed`.
+
 
 ## [2016-Q4] - (UNRELEASED)
+
+- **Changed**: lychee.Environment.\_\_FEATURES represents Feature Prediction (by `bootstrap.js`).
+- **Added**: `lychee.assimilate(target)` to include non-packaged non-lychee Assets and Implementations.
+- **Fixed**: `html-nwjs` platform has correct peer-to-peer Networking.
+- Changed: ES6 Migration for integration scripts (`./bin`).
+- Added: lychee.js Harvester uses a Watcher and faster bootup cycle.
+- Fixed: lychee.js Fertilizer supports `html` Application Cache manifests.
+- Fixed: lychee.app.Main `changeState()` handles invalid states correctly.
 
 
 ## [2016-Q3] - 2016-09-28
@@ -25,10 +37,10 @@ The update behaviour is changed as explained in the [RELEASE Guide](./guides/REL
 - Changed: Integration of `.github/TOKEN` file.
 - Changed: License to MIT/GPL3/CC4-BY-SA.
 - Changed: New Welcome Page for easier Project-based workflow.
+- Removed: fyto.js was deprecated, lycheejs-legacy is embraced.
+- Added: lychee.js Editor allows `project` changes.
 - Fixed: lychee.ui Entities.
 - Fixed: lychee.effect Stack is now completely delay-compatible.
-- Added: lychee.js Editor allows `project` changes.
-- Removed: fyto.js was deprecated, lycheejs-legacy is embraced.
 
 
 ## [2016-Q2] - 2016-06-27
