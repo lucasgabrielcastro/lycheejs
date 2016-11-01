@@ -486,6 +486,56 @@ lychee.define('lychee.ui.State').requires([
 				_State.prototype.leave.call(this, oncomplete);
 			}, this);
 
+		},
+
+		render: function(clock, delta, custom) {
+
+			let renderer = this.renderer;
+			if (renderer !== null) {
+
+				let menu   = _MENU;
+				let notice = _NOTICE;
+				let layer  = this.__layers.ui;
+
+				if (menu !== null) {
+					menu.visible = false;
+				}
+
+				if (notice !== null) {
+					notice.visible = false;
+				}
+
+
+				renderer.clear();
+
+				_State.prototype.render.call(this, clock, delta, true);
+
+				if (menu !== null) {
+
+					menu.visible = true;
+					menu.render(
+						renderer,
+						layer.position.x + layer.offset.x,
+						layer.position.y + layer.offset.y
+					);
+
+				}
+
+				if (notice !== null) {
+
+					notice.visible = true;
+					notice.render(
+						renderer,
+						layer.position.x + layer.offset.x,
+						layer.position.y + layer.offset.y
+					);
+
+				}
+
+				renderer.flush();
+
+			}
+
 		}
 
 	};
