@@ -29,6 +29,7 @@ lychee.define('lychee.net.socket.WS').tags({
 
 }).exports(function(lychee, global, attachments) {
 
+	const Buffer         = lychee.import('Buffer');
 	const _net           = global.require('net');
 	const _clearInterval = global.clearInterval;
 	const _setInterval   = global.setInterval;
@@ -48,11 +49,15 @@ lychee.define('lychee.net.socket.WS').tags({
 		let that = this;
 		if (that.__connection !== socket) {
 
-			socket.on('data', function(blob) {
+			socket.on('data', function(raw) {
 
 				// XXX: nwjs has global scope problems
 				// XXX: Internal Buffer is not our global.Buffer interface
-				blob = _Buffer.from(blob);
+
+				let blob = new Buffer(raw.length);
+				for (let b = 0; b < blob.length; b++) {
+					blob[b] = raw[b];
+				}
 
 
 				let chunks = protocol.receive(blob);
