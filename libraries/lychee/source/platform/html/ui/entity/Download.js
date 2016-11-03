@@ -56,7 +56,7 @@ lychee.define('lychee.ui.entity.Download').tags({
 
 					let element = global.document.createElement('a');
 
-					element.download = name + '.' + ext;
+					element.download = name + '.' + mime[ext].ext;
 					element.href     = data.blob.buffer[ext];
 
 					element.click();
