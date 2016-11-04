@@ -1,6 +1,10 @@
 
 lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
+	const _INTERFACEOF_CACHE = {};
+
+
+
 	/*
 	 * NAMESPACE
 	 */
@@ -705,15 +709,30 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 			}
 
 
-			let valid = false;
-			let method, property;
+			let tname    = template.displayName;
+			let iname    = instance.displayName;
+			let hashable = typeof tname === 'string' && typeof iname === 'string';
+			let hashmap  = _INTERFACEOF_CACHE;
+			let valid    = false;
 
 
 			// 0. Quick validation for identical constructors
-			if (typeof template.displayName === 'string' && typeof instance.displayName === 'string') {
+			if (hashable === true) {
 
-				if (template.displayName === instance.displayName) {
+				if (hashmap[tname] !== undefined && hashmap[tname][iname] !== undefined) {
+
+					return hashmap[tname][iname];
+
+				} else if (tname === iname) {
+
+					if (hashmap[tname] === undefined) {
+						hashmap[tname] = {};
+					}
+
+					hashmap[tname][iname] = true;
+
 					return true;
+
 				}
 
 			}
@@ -724,7 +743,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				valid = true;
 
-				for (method in template.prototype) {
+				for (let method in template.prototype) {
 
 					if (typeof template.prototype[method] !== typeof instance.prototype[method]) {
 						valid = false;
@@ -739,7 +758,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				valid = true;
 
-				for (method in template.prototype) {
+				for (let method in template.prototype) {
 
 					if (typeof template.prototype[method] !== typeof instance[method]) {
 						valid = false;
@@ -754,7 +773,7 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 				valid = true;
 
-				for (property in template) {
+				for (let property in template) {
 
 					if (template.hasOwnProperty(property) && instance.hasOwnProperty(property)) {
 
@@ -766,6 +785,17 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 					}
 
 				}
+
+			}
+
+
+			if (hashable === true) {
+
+				if (hashmap[tname] === undefined) {
+					hashmap[tname] = {};
+				}
+
+				hashmap[tname][iname] = valid;
 
 			}
 
