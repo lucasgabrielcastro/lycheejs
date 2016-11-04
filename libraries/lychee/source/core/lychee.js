@@ -700,8 +700,24 @@ lychee = typeof lychee !== 'undefined' ? lychee : (function(global) {
 
 		interfaceof: function(template, instance) {
 
+			if (instance === undefined) {
+				return false;
+			}
+
+
 			let valid = false;
 			let method, property;
+
+
+			// 0. Quick validation for identical constructors
+			if (typeof template.displayName === 'string' && typeof instance.displayName === 'string') {
+
+				if (template.displayName === instance.displayName) {
+					return true;
+				}
+
+			}
+
 
 			// 1. Interface validation on Template
 			if (template instanceof Function && template.prototype instanceof Object && instance instanceof Function && instance.prototype instanceof Object) {
