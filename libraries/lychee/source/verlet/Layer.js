@@ -1,7 +1,8 @@
 
 lychee.define('lychee.verlet.Layer').requires([
-	'lychee.app.Layer',
 	'lychee.math.Vector3'
+]).includes([
+	'lychee.app.Layer'
 ]).exports(function(lychee, global, attachments) {
 
 	const _Layer   = lychee.import('lychee.app.Layer');
@@ -20,7 +21,6 @@ lychee.define('lychee.verlet.Layer').requires([
 
 		this.friction   = 0.99;
 		this.gravity    = new _Vector3({ x: 0, y: 1, z: 0 });
-
 
 		this.__velocity = new _Vector3();
 
