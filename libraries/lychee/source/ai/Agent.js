@@ -27,15 +27,18 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 		let settings = Object.assign({}, data);
 
 
+		this.brain    = null;
+		this.controls = [];
 		this.entity   = null;
 		this.fitness  = 0;
 		this.sensors  = [];
-		this.controls = [];
 
 
-		this.setEntity(settings.entity);
-		this.setSensors(settings.sensors);
+		this.setBrain(settings.brain);
 		this.setControls(settings.controls);
+		this.setEntity(settings.entity);
+		this.setFitness(settings.fitness);
+		this.setSensors(settings.sensors);
 
 
 		settings = null;
@@ -49,9 +52,58 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 		 * ENTITY API
 		 */
 
+		deserialize: function(blob) {
+
+			let brain = lychee.deserialize(blob.brain);
+			if (brain !== null) {
+				this.setBrain(brain);
+			}
+
+			let entity = lychee.deserialize(blob.entity);
+			if (entity !== null) {
+				this.setEntity(entity);
+			}
+
+
+			if (blob.controls instanceof Array) {
+				this.controls = blob.controls.map(lychee.deserialize);
+			}
+
+			if (blob.sensors instanceof Array) {
+				this.sensors = blob.sensors.map(lychee.deserialize);
+			}
+
+		},
+
+		serialize: function() {
+
+			let settings = {};
+			let blob     = {};
+
+
+			if (this.fitness !== 0) settings.fitness = this.fitness;
+
+
+			if (this.brain !== null)      blob.brain    = lychee.serialize(this.brain);
+			if (this.controls.length > 0) blob.controls = this.controls.map(lychee.serialize);
+			if (this.entity !== null)     blob.entity   = lychee.serialize(this.entity);
+			if (this.sensors.length > 0)  blob.sensors  = this.sensors.map(lychee.serialize);
+
+
+			return {
+				'constructor': 'lychee.ai.Agent',
+				'arguments':   [ settings ],
+				'blob':        Object.keys(blob).length > 0 ? blob : null
+			};
+
+		},
+
 		update: function(clock, delta) {
 
-			// TODO: Update brain
+			let brain = this.brain;
+			if (brain !== null) {
+				brain.update(clock, delta);
+			}
 
 		},
 
@@ -61,11 +113,41 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 		 * CUSTOM API
 		 */
 
+		crossover: function(agent) {
+
+			agent = agent instanceof Composite ? agent : null;
+
+
+			if (agent !== null) {
+
+				// XXX: This is implemented by AI Agents
+
+				return [ this, agent ];
+
+			}
+
+
+			return null;
+
+		},
+
+		mutate: function() {
+
+			// XXX: This is implemented by AI Agents
+
+		},
+
 		reward: function(diff) {
 
 			diff = typeof diff === 'number' ? (diff | 0) : 1;
 
 			this.fitness += diff;
+
+
+			let brain = this.brain;
+			if (brain !== null) {
+				brain.reward();
+			}
 
 		},
 
@@ -74,6 +156,30 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 			diff = typeof diff === 'number' ? (diff | 0) : 1;
 
 			this.fitness -= diff;
+
+
+			let brain = this.brain;
+			if (brain !== null) {
+				brain.punish();
+			}
+
+		},
+
+		setBrain: function(brain) {
+
+			brain = brain instanceof Object ? brain : null;
+
+
+			if (brain !== null) {
+
+				this.brain = brain;
+
+				return true;
+
+			}
+
+
+			return false;
 
 		},
 
@@ -106,6 +212,24 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 			if (entity !== null) {
 
 				this.entity = entity;
+
+				return true;
+
+			}
+
+
+			return false;
+
+		},
+
+		setFitness: function(fitness) {
+
+			fitness = typeof fitness === 'number' ? (fitness | 0) : null;
+
+
+			if (fitness !== null) {
+
+				this.fitness = fitness;
 
 				return true;
 

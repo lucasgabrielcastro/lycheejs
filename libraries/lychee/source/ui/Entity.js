@@ -102,11 +102,11 @@ lychee.define('lychee.ui.Entity').includes([
 			if (this.depth !== 0)  settings.depth  = this.depth;
 			if (this.radius !== 0) settings.radius = this.radius;
 
-			if (this.alpha !== 1)                      settings.alpha   = this.alpha;
+			if (this.alpha !== 1)                          settings.alpha   = this.alpha;
 			if (this.shape !== Composite.SHAPE.rectangle)  settings.shape   = this.shape;
-			if (this.state !== 'default')              settings.state   = this.state;
-			if (Object.keys(this.__states).length > 0) settings.states  = this.__states;
-			if (this.visible !== true)                 settings.visible = this.visible;
+			if (this.state !== 'default')                  settings.state   = this.state;
+			if (Object.keys(this.__states).length > 0)     settings.states  = this.__states;
+			if (this.visible !== true)                     settings.visible = this.visible;
 
 
 			if (this.position.x !== 0 || this.position.y !== 0) {
