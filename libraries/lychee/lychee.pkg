@@ -190,6 +190,20 @@
 				"js"
 			],
 			"ai": {
+				"Agent": [
+					"js"
+				],
+				"Layer": [
+					"js"
+				],
+				"enn": {
+					"Agent": [
+						"js"
+					],
+					"Brain": [
+						"js"
+					]
+				},
 				"neural": {
 					"Agent": [
 						"js"

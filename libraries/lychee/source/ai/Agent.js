@@ -5,6 +5,29 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 	 * HELPERS
 	 */
 
+	const _validate_brain = function(brain) {
+
+		if (brain instanceof Object) {
+
+			if (
+				typeof brain.update === 'function'
+				&& typeof brain.reward === 'function'
+				&& typeof brain.punish === 'function'
+				&& typeof brain.setControls === 'function'
+				&& typeof brain.setSensors === 'function'
+			) {
+
+				return true;
+
+			}
+
+		}
+
+
+		return false;
+
+	};
+
 	const _validate_entity = function(entity) {
 
 		if (entity instanceof Object) {
@@ -167,7 +190,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 		setBrain: function(brain) {
 
-			brain = brain instanceof Object ? brain : null;
+			brain = _validate_brain(brain) === true ? brain : null;
 
 
 			if (brain !== null) {
@@ -194,6 +217,16 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 					return control instanceof Object;
 				});
 
+				this.controls.forEach(function(control) {
+					control.setEntity(this.entity);
+				}.bind(this));
+
+
+				let brain = this.brain;
+				if (brain !== null) {
+					brain.setControls(this.controls);
+				}
+
 
 				return true;
 
@@ -212,6 +245,16 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 			if (entity !== null) {
 
 				this.entity = entity;
+
+
+				this.controls.forEach(function(control) {
+					control.setEntity(this.entity);
+				}.bind(this));
+
+				this.sensors.forEach(function(sensor) {
+					sensor.setEntity(this.entity);
+				}.bind(this));
+
 
 				return true;
 
@@ -250,6 +293,16 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 				this.sensors = sensors.filter(function(sensor) {
 					return sensor instanceof Object;
 				});
+
+				this.sensors.forEach(function(sensor) {
+					sensor.setEntity(this.entity);
+				}.bind(this));
+
+
+				let brain = this.brain;
+				if (brain !== null) {
+					brain.setSensors(this.sensors);
+				}
 
 
 				return true;
