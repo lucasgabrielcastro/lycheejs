@@ -11,8 +11,6 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (
 				typeof brain.update === 'function'
-				&& typeof brain.reward === 'function'
-				&& typeof brain.punish === 'function'
 				&& typeof brain.setControls === 'function'
 				&& typeof brain.setSensors === 'function'
 			) {
@@ -166,12 +164,6 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			this.fitness += diff;
 
-
-			let brain = this.brain;
-			if (brain !== null) {
-				brain.reward();
-			}
-
 		},
 
 		punish: function(diff) {
@@ -179,12 +171,6 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 			diff = typeof diff === 'number' ? (diff | 0) : 1;
 
 			this.fitness -= diff;
-
-
-			let brain = this.brain;
-			if (brain !== null) {
-				brain.punish();
-			}
 
 		},
 

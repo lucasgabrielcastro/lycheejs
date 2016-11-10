@@ -37,6 +37,24 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 			return data;
 
+		},
+
+
+
+		/*
+		 * CUSTOM API
+		 */
+
+		crossover: function(agent) {
+
+			// TODO: crossover() genome of brainz
+
+		},
+
+		mutate: function() {
+
+			// TODO: mutate() genome of brainz
+
 		}
 
 
