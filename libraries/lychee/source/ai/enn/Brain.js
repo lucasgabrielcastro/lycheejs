@@ -84,7 +84,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			for (let n = 0, nl = layer.length; n < nl; n++) {
 
 				let neuron = layer[n];
-                let value  = 0;
+				let value  = 0;
 
 				if (l === ll - 1) {
 
