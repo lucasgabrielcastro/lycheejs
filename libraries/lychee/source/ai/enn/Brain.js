@@ -1,8 +1,8 @@
 
 lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachments) {
 
-	const _ACTIVATION_RESPONSE =  1;
-	const _ACTIVATION_BIAS     = -1;
+	const _MOMENTUM      = 0.3;
+	const _LEARNING_RATE = 0.3;
 
 
 
@@ -10,9 +10,137 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 	 * HELPERS
 	 */
 
-	const _sigmoid = function(input, response) {
+	const _init_network = function() {
 
-		return (1 / (1 + Math.exp(-1 * input / response)));
+		let input_size = this.__sensors_map.reduce(function(a, b) {
+			return a + b;
+		}, 0);
+
+		let output_size = this.__controls_map.reduce(function(a, b) {
+			return a + b;
+		}, 0);
+
+
+		let hidden_size = 1;
+
+		if (input_size > output_size) {
+			hidden_size = input_size;
+		} else {
+			hidden_size = output_size;
+		}
+
+
+		for (let l = 0; l <= 6; l++) {
+
+			let prev = hidden_size;
+			let size = hidden_size;
+
+			if (l === 0) {
+				prev = 0;
+				size = input_size;
+			} else if (l === 1) {
+				prev = input_size;
+				size = hidden_size;
+			} else if (l === 6) {
+				prev = hidden_size;
+				size = output_size;
+			}
+
+
+			let layer = new Array(size);
+
+			for (let n = 0, nl = layer.length; n < nl; n++) {
+
+				let neuron = {
+					bias:    (Math.random() * 0.4 - 0.2),
+					change:  0,
+					delta:   0,
+					weights: [],
+					output:  0
+				};
+
+				for (let p = 0; p < prev; p++) {
+					neuron.weights.push(Math.random() * 0.4 - 0.2);
+				}
+
+				layer[n] = neuron;
+
+			}
+
+			this.__layers[l] = layer;
+
+		}
+
+	};
+
+	const _train_network = function(inputs, outputs) {
+
+		let ll = this.__layers.length;
+
+		for (let l = ll - 1; l >= 0; l--) {
+
+			let layer = this.__layers[l];
+
+			for (let n = 0, nl = layer.length; n < nl; n++) {
+
+				let neuron = layer[n];
+                let value  = 0;
+
+				if (l === ll - 1) {
+
+					value = outputs[n] - neuron.output;
+
+				} else {
+
+					let others = this.__layers[l + 1];
+
+					for (let o = 0, ol = others.length; o < ol; o++) {
+
+						let other = others[o];
+
+						value += other.delta * other.weights[n];
+
+					}
+
+				}
+
+				neuron.delta = value * neuron.value * (1 - neuron.value);
+
+			}
+
+		}
+
+
+		for (let l = 1; l < ll; l++) {
+
+			let layer = this.__layers[l];
+			let prev  = this.__layers[l - 1];
+
+			for (let n = 0, nl = layer.length; n < nl; n++) {
+
+				let neuron = layer[n];
+				let delta  = neuron.delta;
+
+				for (let p = 0, pl = prev.length; p < pl; p++) {
+
+					let change = (_LEARNING_RATE * delta * prev[p].output) + (_MOMENTUM * neuron.change);
+
+					neuron.change      = change;
+					neuron.weights[p] += change;
+
+				}
+
+				neuron.bias += (_LEARNING_RATE * delta);
+
+			}
+
+		}
+
+	};
+
+	const _sigmoid = function(value) {
+
+		return (1 / (1 + Math.exp(-1 * value)));
 
 	};
 
@@ -79,6 +207,10 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			let controls_map = this.__controls_map;
 			let sensors      = this.sensors;
 			let sensors_map  = this.__sensors_map;
+			let training     = {
+				inputs:  null,
+				outputs: null
+			};
 
 
 			let inputs = [];
@@ -91,6 +223,8 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 				inputs.push.apply(inputs, values);
 
 			}
+
+			training.inputs = inputs;
 
 
 			let outputs = [];
@@ -107,30 +241,25 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 				for (let n = 0, nl = layer.length; n < nl; n++) {
 
 					let count  = 0;
-					let value  = 0;
 					let neuron = layer[n];
+					let value  = neuron.bias;
 
 
-					let wl = neuron.length;
+					let wl = neuron.weights.length;
 
-					for (let w = 0; w < wl - 1; w++) {
-						value += neuron[w] * inputs[count++];
+					for (let w = 0; w < wl; w++) {
+						value += neuron.weights[w] * inputs[count++];
 					}
 
-					value += neuron[wl - 1] * _ACTIVATION_BIAS;
+					neuron.output = _sigmoid(value);
 
-
-					let tmp = _sigmoid(value, _ACTIVATION_RESPONSE);
-
-					// TODO: Try out RNN / reinforcement here
-					// maybe LSTM gateways will work, too!?
-					// neuron.push(tmp);
-
-					outputs.push(tmp);
+					outputs.push(neuron.output);
 
 				}
 
 			}
+
+			training.outputs = outputs;
 
 
 			let offset = 0;
@@ -149,6 +278,9 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 			}
 
+
+			return training;
+
 		},
 
 
@@ -156,6 +288,36 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		/*
 		 * CUSTOM API
 		 */
+
+		train: function(training) {
+
+			training = training instanceof Object ? training : null;
+
+
+			if (training !== null) {
+
+				let iterations = training.iterations || 1;
+				let inputs     = training.inputs     || null;
+				let outputs    = training.outputs    || null;
+
+
+				if (inputs !== null && outputs !== null) {
+
+					for (let i = 0; i < iterations; i++) {
+						_train_network.call(this, inputs, outputs);
+					}
+
+
+					return true;
+
+				}
+
+			}
+
+
+			return false;
+
+		},
 
 		setControls: function(controls) {
 
@@ -170,9 +332,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 					return (control.sensor() || [1]).length;
 				});
 
-
-				// TODO: Initialize layers[layers.length - 1]
-				// modify hidden layers.length
+				_init_network.call(this);
 
 
 				return true;
@@ -197,9 +357,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 					return (sensor.sensor() || [1]).length;
 				});
 
-
-				// TODO: Initialize layers[0]
-				// modify hidden layers.length
+				_init_network.call(this);
 
 
 				return true;
