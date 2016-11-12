@@ -75,6 +75,15 @@
 	let   _std_out = '';
 	let   _std_err = '';
 
+	console.clear = function() {
+
+		// clear screen
+		// process.stdout.write('\x1B[2J');
+
+		// clear screen and reset cursor
+		process.stdout.write('\x1B[2J\x1B[0f');
+
+	};
 
 	console.log = function() {
 

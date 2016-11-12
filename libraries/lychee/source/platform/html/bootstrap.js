@@ -123,6 +123,7 @@
 		console = {};
 	}
 
+	const  _clear   = console.clear || function() {};
 	const  _log     = console.log   || function() {};
 	const  _info    = console.info  || console.log;
 	const  _warn    = console.warn  || console.log;
@@ -130,6 +131,10 @@
 	let    _std_out = '';
 	let    _std_err = '';
 
+
+	console.clear = function() {
+		_clear.call(console);
+	};
 
 	console.log = function() {
 
