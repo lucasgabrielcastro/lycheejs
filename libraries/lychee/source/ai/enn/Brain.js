@@ -298,7 +298,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 			if (training !== null) {
 
-				let iterations = training.iterations || 1;
+				let iterations = training.iterations || (1 / _LEARNING_RATE) * 30;
 				let inputs     = training.inputs     || null;
 				let outputs    = training.outputs    || null;
 
