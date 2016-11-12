@@ -218,7 +218,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			for (let s = 0, sl = sensors.length; s < sl; s++) {
 
 				let sensor = sensors[s];
-				let values = sensors.sensor();
+				let values = sensor.sensor();
 
 				inputs.push.apply(inputs, values);
 

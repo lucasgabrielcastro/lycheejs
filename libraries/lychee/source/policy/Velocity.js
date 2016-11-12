@@ -45,7 +45,7 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 			let limit  = this.limit;
 			let values = [];
 
-			if (entity.velocity instanceof Object) {
+			if (entity !== null) {
 
 				values.push(
 					entity.velocity.x / limit,
@@ -66,10 +66,12 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 			let y = values[1] * limit;
 			let z = values[2] * limit;
 
-			if (entity.velocity instanceof Object) {
+			if (entity !== null) {
+
 				entity.velocity.x = x;
 				entity.velocity.y = y;
 				entity.velocity.z = z;
+
 			}
 
 		}

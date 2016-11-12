@@ -6,6 +6,7 @@ lychee.define('lychee.ai.enn.Agent').includes([
 ]).exports(function(lychee, global, attachments) {
 
 	const _Agent = lychee.import('lychee.ai.Agent');
+	const _Brain = lychee.import('lychee.ai.enn.Brain');
 
 
 
@@ -16,6 +17,9 @@ lychee.define('lychee.ai.enn.Agent').includes([
 	let Composite = function(data) {
 
 		let settings = Object.assign({}, data);
+
+
+		settings.brain = new _Brain();
 
 
 		_Agent.call(this, settings);

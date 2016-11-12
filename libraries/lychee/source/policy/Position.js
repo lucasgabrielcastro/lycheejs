@@ -45,7 +45,7 @@ lychee.define('lychee.policy.Position').exports(function(lychee, global, attachm
 			let limit  = this.limit;
 			let values = [];
 
-			if (entity.position instanceof Object) {
+			if (entity !== null) {
 
 				values.push(
 					entity.position.x / limit,
@@ -66,10 +66,12 @@ lychee.define('lychee.policy.Position').exports(function(lychee, global, attachm
 			let y = values[1] * limit;
 			let z = values[2] * limit;
 
-			if (entity.position instanceof Object) {
+			if (entity !== null) {
+
 				entity.position.x = x;
 				entity.position.y = y;
 				entity.position.z = z;
+
 			}
 
 		}
