@@ -221,7 +221,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 				});
 
 				this.controls.forEach(function(control) {
-					control.setEntity(this.entity);
+					control.entity = this.entity;
 				}.bind(this));
 
 
@@ -251,11 +251,11 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 
 				this.controls.forEach(function(control) {
-					control.setEntity(this.entity);
+					control.entity = this.entity;
 				}.bind(this));
 
 				this.sensors.forEach(function(sensor) {
-					sensor.setEntity(this.entity);
+					sensor.entity = this.entity;
 				}.bind(this));
 
 
@@ -298,7 +298,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 				});
 
 				this.sensors.forEach(function(sensor) {
-					sensor.setEntity(this.entity);
+					sensor.entity = this.entity;
 				}.bind(this));
 
 

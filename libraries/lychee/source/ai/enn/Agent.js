@@ -18,6 +18,10 @@ lychee.define('lychee.ai.enn.Agent').includes([
 		let settings = Object.assign({}, data);
 
 
+		_Agent.call(this, settings);
+
+		settings = null;
+
 	};
 
 

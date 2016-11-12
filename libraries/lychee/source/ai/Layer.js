@@ -70,10 +70,10 @@ lychee.define('lychee.ai.Layer').requires([
 			let agent  = new Agent({
 				entity:  entity,
 				sensors: sensors.map(function(Sensor) {
-					return new Sensor(entity, that);
+					return new Sensor(entity);
 				}),
 				controls: controls.map(function(Control) {
-					return new Control(entity, that);
+					return new Control(entity);
 				})
 			});
 
@@ -179,15 +179,23 @@ lychee.define('lychee.ai.Layer').requires([
 		this.setLifetime(settings.lifetime);
 		this.setSensors(settings.sensors);
 
-		this.setType(settings.type);
-
 		delete settings.controls;
 		delete settings.lifetime;
 		delete settings.sensors;
-		delete settings.type;
 
 
 		_Layer.call(this, settings);
+
+
+		/*
+		 * INITIALIZATION
+		 */
+
+		if (settings.type !== this.type) {
+			this.setType(settings.type);
+		} else {
+			_create_population.call(this);
+		}
 
 		settings = null;
 
