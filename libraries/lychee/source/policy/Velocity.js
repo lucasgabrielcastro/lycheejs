@@ -43,15 +43,14 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 
 			let entity = this.entity;
 			let limit  = this.limit;
-			let values = [];
+			let values = [ 0.5, 0.5, 0.5 ];
+
 
 			if (entity !== null) {
 
-				values.push(
-					entity.velocity.x / limit,
-					entity.velocity.y / limit,
-					entity.velocity.z / limit
-				);
+				values[0] = entity.velocity.x / limit;
+				values[1] = entity.velocity.y / limit;
+				values[2] = entity.velocity.z / limit;
 
 			}
 
@@ -62,9 +61,12 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 
 		control: function(values) {
 
-			let x = values[0] * limit;
-			let y = values[1] * limit;
-			let z = values[2] * limit;
+			let entity = this.entity;
+			let limit  = this.limit;
+			let x      = values[0] * limit;
+			let y      = values[1] * limit;
+			let z      = values[2] * limit;
+
 
 			if (entity !== null) {
 

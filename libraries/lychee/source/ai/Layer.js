@@ -44,7 +44,7 @@ lychee.define('lychee.ai.Layer').requires([
 
 	};
 
-	const _create_population = function() {
+	const _initialize = function() {
 
 		let controls   = this.controls;
 		let entities   = this.entities;
@@ -83,7 +83,7 @@ lychee.define('lychee.ai.Layer').requires([
 
 	};
 
-	const _mutate_population = function() {
+	const _epoche = function() {
 
 		let oldpopulation = this.__population;
 		let newpopulation = [];
@@ -131,16 +131,31 @@ lychee.define('lychee.ai.Layer').requires([
 			let zw_agent = _get_agent_by_fitness(oldpopulation, Math.random() * fitness.total);
 			let zz_agent = _get_agent_by_fitness(oldpopulation, Math.random() * fitness.total);
 
-			let babies = zw_agent.crossover(zz_agent);
-			if (babies !== null) {
+			if (zw_agent !== null && zz_agent !== null) {
 
-                babies[0].mutate();
-				babies[1].mutate();
+				let babies = zw_agent.crossover(zz_agent);
+				if (babies !== null) {
 
-				newpopulation.push(babies[0]);
-				newpopulation.push(babies[1]);
+            	    babies[0].mutate();
+					babies[1].mutate();
+
+					newpopulation.push(babies[0]);
+					newpopulation.push(babies[1]);
+
+				}
 
 			}
+
+		}
+
+
+		for (let np = 0, npl = newpopulation.length; np < npl; np++) {
+
+			let agent = newpopulation[np];
+
+			agent.fitness = 0;
+
+			this.trigger('epoche', [ agent ]);
 
 		}
 
@@ -194,7 +209,7 @@ lychee.define('lychee.ai.Layer').requires([
 		if (settings.type !== this.type) {
 			this.setType(settings.type);
 		} else {
-			_create_population.call(this);
+			_initialize.call(this);
 		}
 
 		settings = null;
@@ -238,11 +253,10 @@ lychee.define('lychee.ai.Layer').requires([
 
 		},
 
-		render: function(renderer, offsetX, offsetY) {
-
-		},
-
 		update: function(clock, delta) {
+
+			_Layer.prototype.update.call(this, clock, delta);
+
 
 			if (this.__start === null) {
 				this.__start = clock;
@@ -263,7 +277,7 @@ lychee.define('lychee.ai.Layer').requires([
 			let t = (clock - this.__start) / this.lifetime;
 			if (t > 1) {
 
-				_mutate_population.call(this);
+				_epoche.call(this);
 
 				this.__start = clock;
 
@@ -347,7 +361,7 @@ lychee.define('lychee.ai.Layer').requires([
 
 					this.type = type;
 
-					_create_population.call(this);
+					_initialize.call(this);
 
 					return true;
 

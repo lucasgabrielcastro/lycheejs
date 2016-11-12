@@ -30,7 +30,9 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		}
 
 
-		for (let l = 0; l <= 6; l++) {
+		let layer_amount = 6;
+
+		for (let l = 0; l < layer_amount; l++) {
 
 			let prev = hidden_size;
 			let size = hidden_size;
@@ -41,7 +43,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			} else if (l === 1) {
 				prev = input_size;
 				size = hidden_size;
-			} else if (l === 6) {
+			} else if (l === layer_amount - 1) {
 				prev = hidden_size;
 				size = output_size;
 			}
@@ -53,10 +55,10 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 				let neuron = {
 					bias:    (Math.random() * 0.4 - 0.2),
-					change:  0,
-					delta:   0,
+					change:  0.0,
+					delta:   0.0,
 					weights: [],
-					output:  0
+					output:  0.5
 				};
 
 				for (let p = 0; p < prev; p++) {
@@ -104,7 +106,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 				}
 
-				neuron.delta = value * neuron.value * (1 - neuron.value);
+				neuron.delta = value * neuron.output * (1 - neuron.output);
 
 			}
 
@@ -233,7 +235,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 				let layer = this.__layers[l];
 
-				if (l > 0) {
+				if (l > 0 && layer.length > 0) {
 					inputs  = outputs;
 					outputs = [];
 				}
@@ -244,7 +246,6 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 					let neuron = layer[n];
 					let value  = neuron.bias;
 
-
 					let wl = neuron.weights.length;
 
 					for (let w = 0; w < wl; w++) {
@@ -252,6 +253,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 					}
 
 					neuron.output = _sigmoid(value);
+
 
 					outputs.push(neuron.output);
 

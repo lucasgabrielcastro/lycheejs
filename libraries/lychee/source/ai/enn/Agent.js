@@ -57,6 +57,8 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 			// TODO: crossover() genome of brainz
 
+			return [ this, agent ];
+
 		},
 
 		mutate: function() {

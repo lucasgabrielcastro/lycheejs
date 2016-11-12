@@ -163,7 +163,8 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 		reward: function(diff) {
 
-			diff = typeof diff === 'number' ? (diff | 0) : 1;
+			diff = typeof diff === 'number' ? Math.abs(diff | 0) : 1;
+
 
 			this.fitness += diff;
 
@@ -185,7 +186,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 		punish: function(diff) {
 
-			diff = typeof diff === 'number' ? (diff | 0) : 1;
+			diff = typeof diff === 'number' ? Math.abs(diff | 0) : 1;
 
 			this.fitness -= diff;
 
