@@ -22,7 +22,7 @@ lychee.define('lychee.ai.Layer').requires([
 	 * HELPERS
 	 */
 
-	const _get_agent_by_fitness = function(population, threshold) {
+	const _get_agent_by_chromoroulette = function(population, threshold) {
 
 		let fitness = 0;
 		let agent   = null;
@@ -85,6 +85,9 @@ lychee.define('lychee.ai.Layer').requires([
 
 	const _epoche = function() {
 
+		let controls      = this.controls;
+		let entities      = this.entities;
+		let sensors       = this.sensors;
 		let oldpopulation = this.__population;
 		let newpopulation = [];
 		let fitness       = this.__fitness;
@@ -105,6 +108,12 @@ lychee.define('lychee.ai.Layer').requires([
 		for (let op = 0, opl = oldpopulation.length; op < opl; op++) {
 
 			let agent = oldpopulation[op];
+
+			// XXX: Avoid updates of Brain
+			agent.sensors  = [];
+			agent.controls = [];
+
+			agent.setEntity(null);
 
 			fitness.total += agent.fitness;
 			fitness.best   = Math.max(fitness.best,  agent.fitness);
@@ -128,8 +137,8 @@ lychee.define('lychee.ai.Layer').requires([
 
 		while (newpopulation.length < oldpopulation.length) {
 
-			let zw_agent = _get_agent_by_fitness(oldpopulation, Math.random() * fitness.total);
-			let zz_agent = _get_agent_by_fitness(oldpopulation, Math.random() * fitness.total);
+			let zw_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
+			let zz_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
 
 			if (zw_agent !== null && zz_agent !== null) {
 
@@ -151,9 +160,18 @@ lychee.define('lychee.ai.Layer').requires([
 
 		for (let np = 0, npl = newpopulation.length; np < npl; np++) {
 
-			let agent = newpopulation[np];
+			let agent  = newpopulation[np];
+			let entity = entities[np];
 
-			agent.fitness = 0;
+			agent.setSensors(sensors.map(function(Sensor) {
+				return new Sensor(entity);
+			}));
+			agent.setControls(controls.map(function(Control) {
+				return new Control(entity);
+			}));
+
+			agent.setEntity(entity);
+			agent.setFitness(0);
 
 			this.trigger('epoche', [ agent ]);
 

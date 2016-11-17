@@ -1,11 +1,5 @@
 
-lychee.define('lychee.ai.Agent').requires([
-	'lychee.ai.Genome'
-]).exports(function(lychee, global, attachments) {
-
-	const _Genome = lychee.import('lychee.ai.Genome');
-
-
+lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 	/*
 	 * HELPERS
@@ -55,7 +49,6 @@ lychee.define('lychee.ai.Agent').requires([
 
 
 		this.brain    = null;
-		this.genome   = new _Genome();
 		this.controls = [];
 		this.entity   = null;
 		this.fitness  = 0;
@@ -69,7 +62,6 @@ lychee.define('lychee.ai.Agent').requires([
 		this.setBrain(settings.brain);
 		this.setSensors(settings.sensors);
 		this.setControls(settings.controls);
-		this.setGenome(settings.genome);
 
 		this.setEntity(settings.entity);
 		this.setFitness(settings.fitness);
@@ -125,9 +117,11 @@ lychee.define('lychee.ai.Agent').requires([
 
 			if (this.brain !== null)         blob.brain     = lychee.serialize(this.brain);
 			if (this.controls.length > 0)    blob.controls  = this.controls.map(lychee.serialize);
-			if (this.entity !== null)        blob.entity    = lychee.serialize(this.entity);
 			if (this.sensors.length > 0)     blob.sensors   = this.sensors.map(lychee.serialize);
             if (this.__trainings.length > 0) blob.trainings = this.__trainings.map(lychee.serialize);
+
+			// XXX: Entity is not serialized, tracked by lychee.ai.Layer automatically
+			// if (this.entity !== null)        blob.entity    = lychee.serialize(this.entity);
 
 
 			return {
@@ -296,24 +290,6 @@ lychee.define('lychee.ai.Agent').requires([
 			if (fitness !== null) {
 
 				this.fitness = fitness;
-
-				return true;
-
-			}
-
-
-			return false;
-
-		},
-
-		setGenome: function(genome) {
-
-			genome = lychee.interfaceof(_Genome, genome) ? genome : null;
-
-
-			if (genome !== null) {
-
-				this.genome = genome;
 
 				return true;
 
