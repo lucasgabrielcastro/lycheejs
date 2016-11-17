@@ -826,9 +826,12 @@ lychee.define('lychee.ui.Layer').requires([
 
 		setEntities: function(entities) {
 
+			entities = entities instanceof Array ? entities : null;
+
+
 			let all = true;
 
-			if (entities instanceof Array) {
+			if (entities !== null) {
 
 				this.entities = [];
 

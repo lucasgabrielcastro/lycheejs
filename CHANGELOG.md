@@ -24,8 +24,11 @@ and `fixed`.
 
 - **Changed**: lychee.Environment.\_\_FEATURES represents Feature Prediction (by `bootstrap.js`).
 - **Added**: `lychee.assimilate(target)` to include non-packaged non-lychee Assets and Implementations.
+- **Added**: `lychee.ai.enn` Stack implements a fast-forward NN architecture.
+- **Added**: `lychee.ai.qnn` Stack implements a q-reinforced NN architecture.
 - **Fixed**: `html-nwjs` platform has correct peer-to-peer Networking.
 - Changed: ES6 Migration for integration scripts (`./bin`).
+- Changed: Performance improvements for `lychee.interfaceof` using a cache.
 - Added: lychee.js Harvester uses a Watcher and faster bootup cycle.
 - Fixed: lychee.js Fertilizer supports `html` Application Cache manifests.
 - Fixed: lychee.app.Main `changeState()` handles invalid states correctly.

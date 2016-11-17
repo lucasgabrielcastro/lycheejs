@@ -68,6 +68,27 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 			// TODO: mutate() genome of brainz
 
+		},
+
+		setGenome: function(genome) {
+
+			let result = _Agent.prototype.setGenome.call(this, genome);
+			if (result === true) {
+
+				// TODO: Add genes to genome
+				// based on brain dimensions
+				// - "sensors" gene
+				// - "controls" gene
+				// - "hidden" gene?
+
+
+				return true;
+
+			}
+
+
+			return false;
+
 		}
 
 
