@@ -55,6 +55,9 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 		crossover: function(agent) {
 
+			let zw_genome = this.genome;
+			let zz_genome = agent.genome;
+
 			// TODO: crossover() genome of brainz
 
 			return [ this, agent ];

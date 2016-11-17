@@ -1,5 +1,5 @@
 
-lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachments) {
+lychee.define('lychee.ai.qnn.Brain').exports(function(lychee, global, attachments) {
 
 	const _MOMENTUM      = 0.3;
 	const _LEARNING_RATE = 0.3;
@@ -54,6 +54,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			for (let n = 0, nl = layer.length; n < nl; n++) {
 
 				let neuron = {
+					bias:    (Math.random() * 0.4 - 0.2),
 					change:  0.0,
 					delta:   0.0,
 					weights: [],
@@ -69,6 +70,71 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			}
 
 			this.__layers[l] = layer;
+
+		}
+
+	};
+
+	const _train_network = function(inputs, outputs) {
+
+		let ll = this.__layers.length;
+
+		for (let l = ll - 1; l >= 0; l--) {
+
+			let layer = this.__layers[l];
+
+			for (let n = 0, nl = layer.length; n < nl; n++) {
+
+				let neuron = layer[n];
+				let value  = 0;
+
+				if (l === ll - 1) {
+
+					value = outputs[n] - neuron.output;
+
+				} else {
+
+					let others = this.__layers[l + 1];
+
+					for (let o = 0, ol = others.length; o < ol; o++) {
+
+						let other = others[o];
+
+						value += other.delta * other.weights[n];
+
+					}
+
+				}
+
+				neuron.delta = value * neuron.output * (1 - neuron.output);
+
+			}
+
+		}
+
+
+		for (let l = 1; l < ll; l++) {
+
+			let layer = this.__layers[l];
+			let prev  = this.__layers[l - 1];
+
+			for (let n = 0, nl = layer.length; n < nl; n++) {
+
+				let neuron = layer[n];
+				let delta  = neuron.delta;
+
+				for (let p = 0, pl = prev.length; p < pl; p++) {
+
+					let change = (_LEARNING_RATE * delta * prev[p].output) + (_MOMENTUM * neuron.change);
+
+					neuron.change      = change;
+					neuron.weights[p] += change;
+
+				}
+
+				neuron.bias += (_LEARNING_RATE * delta);
+
+			}
 
 		}
 
@@ -126,11 +192,11 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 
 			// TODO: Brain serialization
-			// in form of Genome (for enn.Agent mutate / crossover)
+			// in form of Genome (for qnn.Agent mutate / crossover)
 
 
 			return {
-				'constructor': 'lychee.ai.enn.Brain',
+				'constructor': 'lychee.ai.qnn.Brain',
 				'arguments':   [ settings ],
 				'blob':        Object.keys(blob).length > 0 ? blob : null
 			};
@@ -163,31 +229,22 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			training.inputs = inputs;
 
 
-			let input_layer = this.__layers[0];
-
-			for (let il = 0, ill = input_layer.length; il < ill; il++) {
-				input_layer[il].value = inputs[il];
-			}
-
-
 			let outputs = [];
 
-			for (let l = 1, ll = this.__layers.length; l < ll; l++) {
+			for (let l = 0, ll = this.__layers.length; l < ll; l++) {
 
 				let layer = this.__layers[l];
-
 
 				if (l > 0 && layer.length > 0) {
 					inputs  = outputs;
 					outputs = [];
 				}
 
-
 				for (let n = 0, nl = layer.length; n < nl; n++) {
 
 					let count  = 0;
 					let neuron = layer[n];
-					let value  = 0;
+					let value  = neuron.bias;
 
 					let wl = neuron.weights.length;
 
@@ -195,10 +252,10 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 						value += neuron.weights[w] * inputs[count++];
 					}
 
-					neuron.value = _sigmoid(value);
+					neuron.output = _sigmoid(value);
 
 
-					outputs.push(neuron.value);
+					outputs.push(neuron.output);
 
 				}
 
@@ -241,9 +298,21 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 			if (training !== null) {
 
-				// XXX: Fast-Forward NN has no training
+				let iterations = training.iterations || (1 / _LEARNING_RATE) * 30;
+				let inputs     = training.inputs     || null;
+				let outputs    = training.outputs    || null;
 
-				return true;
+
+				if (inputs !== null && outputs !== null) {
+
+					for (let i = 0; i < iterations; i++) {
+						_train_network.call(this, inputs, outputs);
+					}
+
+
+					return true;
+
+				}
 
 			}
 
