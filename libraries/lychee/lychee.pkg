@@ -193,6 +193,9 @@
 				"Agent": [
 					"js"
 				],
+				"Genome": [
+					"js"
+				],
 				"Layer": [
 					"js"
 				],

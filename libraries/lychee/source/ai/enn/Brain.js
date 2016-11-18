@@ -1,7 +1,7 @@
 
 lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachments) {
 
-	const _NEURON_BIAS = -1;
+	const _NEURON_BIAS = 1;
 
 
 
@@ -72,10 +72,10 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		}
 
 
-		this.__input_size  = input_size;
-		this.__hidden_size = hidden_size;
-		this.__output_size = output_size;
-		this.__weight_size = weight_size;
+		this.__size.input  = input_size;
+		this.__size.hidden = hidden_size;
+		this.__size.output = output_size;
+		this.__size.weight = weight_size;
 
 	};
 
@@ -103,12 +103,13 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		this.__layers       = [];
 		this.__sensors_map  = [];
 
-
 		// cache structures
-		this.__input_size  = 0;
-		this.__hidden_size = 0;
-		this.__output_size = 0;
-		this.__weight_size = 0;
+		this.__size = {
+			input:  0,
+			hidden: 0,
+			output: 0,
+			weight: 0
+		};
 
 
 		this.setSensors(settings.sensors);
@@ -125,7 +126,17 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		 * ENTITY API
 		 */
 
-		// deserialize: function(blob) {},
+		deserialize: function(blob) {
+
+			if (blob.layers instanceof Array) {
+				this.__layers = blob.layers.map(lychee.deserialize);
+			}
+
+			if (blob.size instanceof Object) {
+				this.__size = lychee.deserialize(blob.size);
+			}
+
+		},
 
 		serialize: function() {
 
@@ -137,8 +148,13 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			if (this.sensors.length > 0)  settings.sensors  = lychee.serialize(this.sensors);
 
 
-			// TODO: Brain serialization
-			// of neural network structures
+			if (this.__layers.length > 0) {
+				blob.layers = this.__layers.map(lychee.serialize);
+			}
+
+			if (this.__size.input !== 0 || this.__size.output !== 0) {
+				blob.size = lychee.serialize(this.__size);
+			}
 
 
 			return {
@@ -188,7 +204,6 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 				let layer = this.__layers[l];
 
-
 				if (l > 0 && layer.length > 0) {
 					inputs  = outputs;
 					outputs = [];
@@ -207,7 +222,9 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 						value += neuron.weights[w] * inputs[count++];
 					}
 
-					value += neuron.weights[wl - 1] * _NEURON_BIAS;
+					if (wl >= 1) {
+						value += neuron.weights[wl - 1] * _NEURON_BIAS;
+					}
 
 					neuron.value = _sigmoid(value);
 
@@ -280,11 +297,11 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 				});
 
 
-				let output_size = this.__controls_map.reduce(function(a, b) {
+				let size = this.__controls_map.reduce(function(a, b) {
 					return a + b;
 				}, 0);
 
-				if (output_size !== this.__output_size) {
+				if (size !== this.__size.output) {
 					_init_network.call(this);
 				}
 
@@ -312,11 +329,11 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 				});
 
 
-				let input_size = this.__sensors_map.reduce(function(a, b) {
+				let size = this.__sensors_map.reduce(function(a, b) {
 					return a + b;
 				}, 0);
 
-				if (input_size !== this.__input_size) {
+				if (size !== this.__size.input) {
 					_init_network.call(this);
 				}
 
@@ -356,7 +373,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			}
 
 
-			this.__weight_size = weights.length;
+			this.__size.weight = weights.length;
 
 
 			return weights;
@@ -370,7 +387,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 
 			if (weights !== null) {
 
-				let size = this.__weight_size;
+				let size = this.__size.weight;
 				if (size === weights.length) {
 
 					let count  = 0;

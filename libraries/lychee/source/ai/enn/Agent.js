@@ -158,7 +158,7 @@ lychee.define('lychee.ai.enn.Agent').includes([
 				if (brain !== null) {
 
 					let gene = genome.getGene('weights');
-					if (gene.length > 0) {
+					if (gene !== null && gene.length > 0) {
 
 						brain.setWeights(gene);
 

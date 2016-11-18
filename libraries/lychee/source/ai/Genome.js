@@ -107,7 +107,7 @@ lychee.define('lychee.ai.Genome').exports(function(lychee, global, attachments) 
 			return {
 				'constructor': 'lychee.ai.Genome',
 				'arguments':   [],
-				'blob':        Object.keys(blob).length > 0 ? blob : null;
+				'blob':        Object.keys(blob).length > 0 ? blob : null
 			};
 
 		},
