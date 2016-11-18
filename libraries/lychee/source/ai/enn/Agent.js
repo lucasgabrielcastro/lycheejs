@@ -24,8 +24,8 @@ lychee.define('lychee.ai.enn.Agent').includes([
 		this.genome = null;
 
 
-		settings.brain  = new _Brain();
-		settings.genome = settings.genome : new _Genome();
+		settings.brain  = settings.brain  || new _Brain();
+		settings.genome = settings.genome || new _Genome();
 
 		_Agent.call(this, settings);
 
@@ -68,12 +68,15 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 			if (agent !== null) {
 
+				let zw_brain  = this.brain;
 				let zw_genome = this.genome;
+				let zz_brain  = agent.brain;
 				let zz_genome = agent.genome;
 
-				if (this.brain !== null && agent.brain !== null) {
-					zw_genome.setGene('weights', this.brain.getWeights());
-					zz_genome.setGene('weights', agent.brain.getWeights());
+
+				if (zw_brain !== null && zz_brain !== null) {
+					zw_genome.setGene('weights', zw_brain.getWeights());
+					zz_genome.setGene('weights', zz_brain.getWeights());
 				}
 
 
@@ -100,23 +103,28 @@ lychee.define('lychee.ai.enn.Agent').includes([
 					}
 
 
+					let zw0_brain = null;
+					let zw1_brain = null;
+
+					if (zw_brain !== null && zz_brain !== null) {
+
+						zw0_brain = lychee.deserialize(lychee.serialize(zw_brain));
+						zw0_brain.setWeights(zw0_dna);
+
+						zw1_brain = lychee.deserialize(lychee.serialize(zz_brain));
+						zw1_brain.setWeights(zw1_dna);
+
+					}
+
+
 					let zw0_genome = lychee.deserialize(lychee.serialize(zw_genome));
 					let zw1_genome = lychee.deserialize(lychee.serialize(zz_genome));
 
 					zw0_genome.setGene('weights', zw0_dna);
 					zw1_genome.setGene('weights', zw1_dna);
 
-
-// TODO: This won't work. Brain has default settings currently
-// TODO: Serialize Brain directly and restore its settings
-// TODO: Use genes for inputs, outputs etc. and restore brain's
-// internal __size maps.
-
-// Brain currently has _NOT_ the settings via setSensors() and setControls()
-
-
-					let zw0_baby = new Composite({ genome: zw0_genome });
-					let zw1_baby = new Composite({ genome: zw1_genome });
+					let zw0_baby = new Composite({ brain: zw0_brain, genome: zw0_genome });
+					let zw1_baby = new Composite({ brain: zw1_brain, genome: zw1_genome });
 
 
 					return [ zw0_baby, zw1_baby ];

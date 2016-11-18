@@ -145,11 +145,15 @@ lychee.define('lychee.ai.Layer').requires([
 				let babies = zw_agent.crossover(zz_agent);
 				if (babies !== null) {
 
-            	    babies[0].mutate();
-					babies[1].mutate();
+					if (newpopulation.indexOf(babies[0]) === -1) {
+						newpopulation.push(babies[0]);
+						babies[0].mutate();
+					}
 
-					newpopulation.push(babies[0]);
-					newpopulation.push(babies[1]);
+					if (newpopulation.indexOf(babies[1]) === -1) {
+						newpopulation.push(babies[1]);
+						babies[1].mutate();
+					}
 
 				}
 
