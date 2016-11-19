@@ -129,7 +129,7 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 		deserialize: function(blob) {
 
 			if (blob.layers instanceof Array) {
-				this.__layers = blob.layers.map(lychee.deserialize);
+				this.__layers = lychee.deserialize(blob.layers);
 			}
 
 			if (blob.size instanceof Object) {
@@ -144,12 +144,13 @@ lychee.define('lychee.ai.enn.Brain').exports(function(lychee, global, attachment
 			let blob     = {};
 
 
-			if (this.controls.length > 0) settings.controls = lychee.serialize(this.controls);
-			if (this.sensors.length > 0)  settings.sensors  = lychee.serialize(this.sensors);
+			// XXX: controls and sensors are handled by lychee.ai.Agent
+			// if (this.controls.length > 0) settings.controls = lychee.serialize(this.controls);
+			// if (this.sensors.length > 0)  settings.sensors  = lychee.serialize(this.sensors);
 
 
 			if (this.__layers.length > 0) {
-				blob.layers = this.__layers.map(lychee.serialize);
+				blob.layers = lychee.serialize(this.__layers);
 			}
 
 			if (this.__size.input !== 0 || this.__size.output !== 0) {

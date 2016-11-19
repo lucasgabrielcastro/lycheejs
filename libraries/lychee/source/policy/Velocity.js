@@ -5,10 +5,17 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 	 * IMPLEMENTATION
 	 */
 
-	let Composite = function(settings, entity) {
+	let Composite = function(data) {
 
-		this.entity = entity || null;
+		let settings = lychee.assignsafe({
+			limit: 0xffff
+		}, data);
+
+
+		this.entity = settings.entity || null;
 		this.limit  = settings.limit;
+
+		settings = null;
 
 	};
 
@@ -22,13 +29,14 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 		serialize: function() {
 
 			let settings = {
-				limit: this.limit
+				entity: null,
+				limit:  this.limit
 			};
 
 
 			return {
-				'reference': 'lychee.policy.Velocity',
-				'arguments': [ settings ]
+				'constructor': 'lychee.policy.Velocity',
+				'arguments':   [ settings ]
 			};
 
 		},
@@ -81,19 +89,7 @@ lychee.define('lychee.policy.Velocity').exports(function(lychee, global, attachm
 	};
 
 
-	let Callback = function(data) {
-
-		let settings = lychee.assignsafe({
-			limit: 0xffffffff
-		}, data);
-
-
-		return Composite.bind(Composite, settings);
-
-	};
-
-
-	return Callback;
+	return Composite;
 
 });
 

@@ -68,12 +68,12 @@ lychee.define('lychee.ai.Layer').requires([
 
 			let entity = entities[e];
 			let agent  = new Agent({
-				entity:  entity,
-				sensors: sensors.map(function(Sensor) {
-					return new Sensor(entity);
+				entity:   entity,
+				sensors:  sensors.map(function(sensor) {
+					return lychee.deserialize(lychee.serialize(sensor));
 				}),
-				controls: controls.map(function(Control) {
-					return new Control(entity);
+				controls: controls.map(function(control) {
+					return lychee.deserialize(lychee.serialize(control));
 				})
 			});
 
@@ -85,9 +85,9 @@ lychee.define('lychee.ai.Layer').requires([
 
 	const _epoche = function() {
 
-		let controls      = this.controls;
 		let entities      = this.entities;
-		let sensors       = this.sensors;
+		let oldcontrols   = [];
+		let oldsensors    = [];
 		let oldpopulation = this.__population;
 		let newpopulation = [];
 		let fitness       = this.__fitness;
@@ -109,10 +109,12 @@ lychee.define('lychee.ai.Layer').requires([
 
 			let agent = oldpopulation[op];
 
+			oldsensors.push(agent.sensors);
+			oldcontrols.push(agent.controls);
+
 			// XXX: Avoid updates of Brain
 			agent.sensors  = [];
 			agent.controls = [];
-
 			agent.setEntity(null);
 
 			fitness.total += agent.fitness;
@@ -135,7 +137,9 @@ lychee.define('lychee.ai.Layer').requires([
 		}
 
 
-		while (newpopulation.length < oldpopulation.length) {
+		let chromoroulette = newpopulation.length;
+
+		while (newpopulation.length < oldpopulation.length && chromoroulette < oldpopulation.length) {
 
 			let zw_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
 			let zz_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
@@ -157,6 +161,35 @@ lychee.define('lychee.ai.Layer').requires([
 
 				}
 
+			} else {
+
+				chromoroulette++;
+
+			}
+
+		}
+
+
+		if (newpopulation.length < oldpopulation.length) {
+
+			if (lychee.debug === true) {
+				console.warn('lychee.ai.Layer: Too less Agents for healthy Evolution');
+			}
+
+
+			let diff = oldpopulation.length - newpopulation.length;
+
+			for (let o = 0; o < oldpopulation.length; o++) {
+
+				if (newpopulation.indexOf(oldpopulation[o]) === -1) {
+					newpopulation.push(oldpopulation[o]);
+					diff--;
+				}
+
+				if (diff === 0) {
+					break;
+				}
+
 			}
 
 		}
@@ -167,12 +200,8 @@ lychee.define('lychee.ai.Layer').requires([
 			let agent  = newpopulation[np];
 			let entity = entities[np];
 
-			agent.setSensors(sensors.map(function(Sensor) {
-				return new Sensor(entity);
-			}));
-			agent.setControls(controls.map(function(Control) {
-				return new Control(entity);
-			}));
+			agent.sensors  = oldsensors[np];
+			agent.controls = oldcontrols[np];
 
 			agent.setEntity(entity);
 			agent.setFitness(0);
@@ -183,6 +212,10 @@ lychee.define('lychee.ai.Layer').requires([
 
 
 		this.__population = newpopulation;
+
+		oldpopulation = null;
+		oldsensors    = null;
+		oldcontrols   = null;
 
 	};
 
@@ -202,7 +235,7 @@ lychee.define('lychee.ai.Layer').requires([
 		this.controls = [];
 		this.type     = Composite.TYPE.ENN;
 
-		this.__fitness    = {
+		this.__fitness = {
 			total:    0,
 			average:  0,
 			best:    -Infinity,
@@ -212,13 +245,13 @@ lychee.define('lychee.ai.Layer').requires([
 		this.__start      = null;
 
 
+		this.setSensors(settings.sensors);
 		this.setControls(settings.controls);
 		this.setLifetime(settings.lifetime);
-		this.setSensors(settings.sensors);
 
+		delete settings.sensors;
 		delete settings.controls;
 		delete settings.lifetime;
-		delete settings.sensors;
 
 
 		_Layer.call(this, settings);
@@ -263,12 +296,10 @@ lychee.define('lychee.ai.Layer').requires([
 			let blob     = (data['blob'] || {});
 
 
+			if (this.sensors.length > 0)          settings.sensors  = this.sensors.map(lychee.serialize);
+			if (this.controls.length > 0)         settings.controls = this.controls.map(lychee.serialize);
 			if (this.lifetime !== 30000)          settings.lifetime = this.lifetime;
 			if (this.type !== Composite.TYPE.ENN) settings.type     = this.type;
-
-
-			// TODO: Add controls to blob
-			// TODO: Add sensors to blob
 
 
 			return data;
@@ -320,8 +351,8 @@ lychee.define('lychee.ai.Layer').requires([
 
 			if (controls !== null) {
 
-				this.controls = controls.filter(function(Control) {
-					return Control instanceof Function;
+				this.controls = controls.filter(function(control) {
+					return control instanceof Object;
 				});
 
 				return true;
@@ -358,8 +389,8 @@ lychee.define('lychee.ai.Layer').requires([
 
 			if (sensors !== null) {
 
-				this.sensors = sensors.filter(function(Sensor) {
-					return Sensor instanceof Function;
+				this.sensors = sensors.filter(function(sensor) {
+					return sensor instanceof Object;
 				});
 
 				return true;

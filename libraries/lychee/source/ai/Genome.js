@@ -55,7 +55,7 @@ lychee.define('lychee.ai.Genome').exports(function(lychee, global, attachments) 
 					let id = null;
 					for (let mid in map) {
 
-						if (map[mid] === e) {
+						if (map[mid] === g) {
 							id = mid;
 						}
 
@@ -81,9 +81,7 @@ lychee.define('lychee.ai.Genome').exports(function(lychee, global, attachments) 
 
 
 			if (this.genes.length > 0) {
-				blob.genes = this.genes.map(function(gene, g) {
-					return gene.slice();
-				});
+				blob.genes = this.genes.map(lychee.serialize);
 			}
 
 
