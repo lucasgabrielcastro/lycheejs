@@ -248,7 +248,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (controls !== null) {
 
-				controls = controls.filter(function(control)
+				controls = controls.filter(function(control) {
 					return control instanceof Object;
 				});
 
@@ -317,7 +317,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (sensors !== null) {
 
-				sensors = sensors.filter(function(sensor)
+				sensors = sensors.filter(function(sensor) {
 					return sensor instanceof Object;
 				});
 
