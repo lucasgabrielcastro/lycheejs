@@ -6,9 +6,11 @@ lychee.define('lychee.ai.enn.Agent').includes([
 	'lychee.ai.enn.Brain'
 ]).exports(function(lychee, global, attachments) {
 
-	const _Agent  = lychee.import('lychee.ai.Agent');
-	const _Genome = lychee.import('lychee.ai.Genome');
-	const _Brain  = lychee.import('lychee.ai.enn.Brain');
+	const _Agent          = lychee.import('lychee.ai.Agent');
+	const _Genome         = lychee.import('lychee.ai.Genome');
+	const _Brain          = lychee.import('lychee.ai.enn.Brain');
+	const _MUTATION_RANGE = 0.5;
+	const _MUTATION_RATE  = 0.1;
 
 
 
@@ -100,6 +102,15 @@ lychee.define('lychee.ai.enn.Agent').includes([
 							zw1_dna.push(zw_dna[d]);
 						}
 
+
+						if (Math.random() <= _MUTATION_RATE) {
+							zw0_dna[d] += (Math.random() * _MUTATION_RANGE * 2) - _MUTATION_RANGE;
+						}
+
+						if (Math.random() <= _MUTATION_RATE) {
+							zw1_dna[d] += (Math.random() * _MUTATION_RANGE * 2) - _MUTATION_RANGE;
+						}
+
 					}
 
 
@@ -135,12 +146,6 @@ lychee.define('lychee.ai.enn.Agent').includes([
 
 
 			return null;
-
-		},
-
-		mutate: function() {
-
-			// TODO: mutate() genome of brainz
 
 		},
 

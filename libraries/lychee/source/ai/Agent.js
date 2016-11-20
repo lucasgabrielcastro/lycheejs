@@ -5,6 +5,30 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 	 * HELPERS
 	 */
 
+	const _update_brain = function() {
+
+		let controls = this.controls;
+		let sensors  = this.sensors;
+		let entity   = this.entity;
+
+
+		for (let s = 0, sl = sensors.length; s < sl; s++) {
+			sensors[s].entity = entity;
+		}
+
+		for (let c = 0, cl = controls.length; c < cl; c++) {
+			controls[c].entity = entity;
+		}
+
+
+		let brain = this.brain;
+		if (brain !== null) {
+			brain.setSensors(sensors);
+			brain.setControls(controls);
+		}
+
+	};
+
 	const _validate_brain = function(brain) {
 
 		if (brain instanceof Object) {
@@ -168,12 +192,6 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 		},
 
-		mutate: function() {
-
-			// XXX: This is implemented by AI Agents
-
-		},
-
 		reward: function(diff) {
 
 			diff = typeof diff === 'number' ? Math.abs(diff | 0) : 1;
@@ -230,18 +248,14 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (controls !== null) {
 
-				this.controls = controls.filter(function(control) {
+				controls = controls.filter(function(control)
 					return control instanceof Object;
 				});
 
-				this.controls.forEach(function(control) {
-					control.entity = this.entity;
-				}.bind(this));
 
-
-				let brain = this.brain;
-				if (brain !== null) {
-					brain.setControls(this.controls);
+				if (controls !== this.controls) {
+					this.controls = controls;
+					_update_brain.call(this);
 				}
 
 
@@ -261,16 +275,12 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (entity !== null) {
 
-				this.entity = entity;
+				if (entity !== this.entity) {
 
+					this.entity = entity;
+					_update_brain.call(this);
 
-				this.controls.forEach(function(control) {
-					control.entity = this.entity;
-				}.bind(this));
-
-				this.sensors.forEach(function(sensor) {
-					sensor.entity = this.entity;
-				}.bind(this));
+				}
 
 
 				return true;
@@ -307,18 +317,14 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 			if (sensors !== null) {
 
-				this.sensors = sensors.filter(function(sensor) {
+				sensors = sensors.filter(function(sensor)
 					return sensor instanceof Object;
 				});
 
-				this.sensors.forEach(function(sensor) {
-					sensor.entity = this.entity;
-				}.bind(this));
 
-
-				let brain = this.brain;
-				if (brain !== null) {
-					brain.setSensors(this.sensors);
+				if (sensors !== this.sensors) {
+					this.sensors = sensors;
+					_update_brain.call(this);
 				}
 
 

@@ -44,14 +44,7 @@ lychee.define('lychee.ai.Layer').requires([
 
 	};
 
-	const _initialize = function() {
-
-		let controls   = this.controls;
-		let entities   = this.entities;
-		let sensors    = this.sensors;
-		let population = this.__population;
-		let that       = this;
-
+	const _create_agent = function() {
 
 		let Agent = _Agent;
 		let type  = this.type;
@@ -64,18 +57,34 @@ lychee.define('lychee.ai.Layer').requires([
 		}
 
 
+		return new Agent();
+
+	};
+
+	const _initialize = function() {
+
+		let controls   = this.controls;
+		let entities   = this.entities;
+		let sensors    = this.sensors;
+		let population = this.__population;
+		let that       = this;
+
+
 		for (let e = 0, el = entities.length; e < el; e++) {
 
 			let entity = entities[e];
-			let agent  = new Agent({
-				entity:   entity,
-				sensors:  sensors.map(function(sensor) {
-					return lychee.deserialize(lychee.serialize(sensor));
-				}),
-				controls: controls.map(function(control) {
-					return lychee.deserialize(lychee.serialize(control));
-				})
-			});
+			let agent  = _create_agent.call(this);
+
+			agent.setSensors(sensors.map(function(sensor) {
+				return lychee.deserialize(lychee.serialize(sensor));
+			}));
+
+			agent.setControls(controls.map(function(control) {
+				return lychee.deserialize(lychee.serialize(control));
+			}));
+
+			agent.setEntity(entity);
+
 
 			population.push(agent);
 
@@ -126,14 +135,26 @@ lychee.define('lychee.ai.Layer').requires([
 		fitness.average = fitness.total / oldpopulation.length;
 
 
-		let elite = (oldpopulation.length / 5) | 0;
-		if (elite % 2 === 1) {
-			elite++;
+		let amount = (oldpopulation.length / 5) | 0;
+		if (amount % 2 === 1) {
+			amount++;
 		}
 
-		let survivors = oldpopulation.slice(0, elite);
-		if (survivors.length > 0) {
+		if (amount > 0) {
+
+			// Survivors
+			let survivors = oldpopulation.slice(0, amount);
 			newpopulation.push.apply(newpopulation, survivors);
+
+			// Mutants
+			let mutants = new Array(amount);
+
+			for (let m = 0, ml = mutants.length; m < ml; m++) {
+				mutants[m] = _create_agent.call(this);
+			}
+
+			newpopulation.push.apply(newpopulation, mutants);
+
 		}
 
 
@@ -151,12 +172,10 @@ lychee.define('lychee.ai.Layer').requires([
 
 					if (newpopulation.indexOf(babies[0]) === -1) {
 						newpopulation.push(babies[0]);
-						babies[0].mutate();
 					}
 
 					if (newpopulation.indexOf(babies[1]) === -1) {
 						newpopulation.push(babies[1]);
-						babies[1].mutate();
 					}
 
 				}
