@@ -33,11 +33,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 
 		if (brain instanceof Object) {
 
-			if (
-				typeof brain.update === 'function'
-				&& typeof brain.setControls === 'function'
-				&& typeof brain.setSensors === 'function'
-			) {
+			if (typeof brain.update === 'function' && typeof brain.setControls === 'function' && typeof brain.setSensors === 'function') {
 
 				return true;
 
@@ -142,7 +138,7 @@ lychee.define('lychee.ai.Agent').exports(function(lychee, global, attachments) {
 			if (this.brain !== null)         blob.brain     = lychee.serialize(this.brain);
 			if (this.controls.length > 0)    blob.controls  = this.controls.map(lychee.serialize);
 			if (this.sensors.length > 0)     blob.sensors   = this.sensors.map(lychee.serialize);
-            if (this.__trainings.length > 0) blob.trainings = this.__trainings.map(lychee.serialize);
+			if (this.__trainings.length > 0) blob.trainings = this.__trainings.map(lychee.serialize);
 
 			// XXX: Entity is not serialized, tracked by lychee.ai.Layer automatically
 			// if (this.entity !== null)        blob.entity    = lychee.serialize(this.entity);
