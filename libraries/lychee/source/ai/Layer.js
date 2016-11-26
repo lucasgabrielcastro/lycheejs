@@ -22,28 +22,6 @@ lychee.define('lychee.ai.Layer').requires([
 	 * HELPERS
 	 */
 
-	const _get_agent_by_chromoroulette = function(population, threshold) {
-
-		let fitness = 0;
-		let agent   = null;
-
-		for (let p = 0, pl = population.length; p < pl; p++) {
-
-			let current = population[p];
-
-			fitness += current.fitness;
-
-			if (fitness > threshold) {
-				agent = current;
-				break;
-			}
-
-		}
-
-		return agent;
-
-	};
-
 	const _create_agent = function() {
 
 		let Agent = _Agent;
@@ -135,18 +113,19 @@ lychee.define('lychee.ai.Layer').requires([
 		fitness.average = fitness.total / oldpopulation.length;
 
 
-		let amount = (oldpopulation.length / 5) | 0;
+		let amount = Math.round(0.2 * oldpopulation.length);
 		if (amount % 2 === 1) {
 			amount++;
 		}
 
 		if (amount > 0) {
 
-			// Survivors
+			// Survivor Population
 			let survivors = oldpopulation.slice(0, amount);
 			newpopulation.push.apply(newpopulation, survivors);
 
-			// Mutants
+
+			// Mutant Population
 			let mutants = new Array(amount);
 
 			for (let m = 0, ml = mutants.length; m < ml; m++) {
@@ -155,34 +134,38 @@ lychee.define('lychee.ai.Layer').requires([
 
 			newpopulation.push.apply(newpopulation, mutants);
 
-		}
 
+			// Breed Population
+			let b     = 0;
+			let count = 0;
+			while (newpopulation.length < oldpopulation.length) {
 
-		let chromoroulette = newpopulation.length;
+				let zw_agent = oldpopulation[b];
+				let zz_agent = oldpopulation[b + 1];
+				let children = zw_agent.crossover(zz_agent);
+				if (children !== null) {
 
-		while (newpopulation.length < oldpopulation.length && chromoroulette < oldpopulation.length) {
-
-			let zw_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
-			let zz_agent = _get_agent_by_chromoroulette(oldpopulation, Math.random() * fitness.total);
-
-			if (zw_agent !== null && zz_agent !== null) {
-
-				let babies = zw_agent.crossover(zz_agent);
-				if (babies !== null) {
-
-					if (newpopulation.indexOf(babies[0]) === -1) {
-						newpopulation.push(babies[0]);
+					if (newpopulation.indexOf(children[0]) === -1) {
+						newpopulation.push(children[0]);
 					}
 
-					if (newpopulation.indexOf(babies[1]) === -1) {
-						newpopulation.push(babies[1]);
+					if (newpopulation.indexOf(children[1]) === -1) {
+						newpopulation.push(children[1]);
 					}
 
 				}
 
-			} else {
 
-				chromoroulette++;
+				b += 1;
+				b %= amount;
+
+				count += 1;
+
+
+				// Fallback if there's no crossover() Implementation
+				if (count > oldpopulation.length) {
+					break;
+				}
 
 			}
 

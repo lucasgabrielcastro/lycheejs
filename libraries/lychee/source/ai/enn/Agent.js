@@ -9,7 +9,7 @@ lychee.define('lychee.ai.enn.Agent').includes([
 	const _Agent          = lychee.import('lychee.ai.Agent');
 	const _Genome         = lychee.import('lychee.ai.Genome');
 	const _Brain          = lychee.import('lychee.ai.enn.Brain');
-	const _MUTATION_RANGE = 0.5;
+	const _MUTATION_RANGE = 0.25;
 	const _MUTATION_RATE  = 0.1;
 
 
